@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <persistence-unit name="profilesPU" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        
+        <!-- JTA Data Source - Using WildFly's default ExampleDS -->
+        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+        
+        <!-- Managed Entity Classes -->
+        <class>com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile</class>
+        <class>com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.LegalResponsibleProfile</class>
+        <class>com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.TherapistProfile</class>
+        
+        <!-- Exclude unlisted classes to avoid scanning issues -->
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        
+        <properties>
+            <!-- Database Configuration -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            
+            <!-- Schema generation - DEVELOPMENT: Use 'create' for first deployment -->
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            
+            <!-- Connection pool settings -->
+            <property name="hibernate.connection.pool_size" value="10"/>
+            
+            <!-- Enable lazy loading outside of transactions -->
+            <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
+            
+            <!-- Naming strategy -->
+            <property name="hibernate.physical_naming_strategy" value="org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"/>
+            
+            <!-- Validation -->
+            <property name="hibernate.validator.apply_to_ddl" value="false"/>
+            
+            <!-- Statistics -->
+            <property name="hibernate.generate_statistics" value="false"/>
+        </properties>
+    </persistence-unit>
+</persistence>
