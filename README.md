@@ -1,44 +1,42 @@
 # Profiles Bounded Context - Therapy System
 
-Este es el bounded context de **Profiles** del sistema de terapia implementado siguiendo Domain-Driven Design (DDD) con CQRS pattern y Jakarta EE 11.
+## Descripción
+Bounded Context para la gestión de perfiles de pacientes, responsables legales y terapeutas en el sistema de terapia. Implementa arquitectura con Domain-Driven Design (DDD) y CQRS pattern.
+
+## Tecnologías
+- **Java 17**
+- **Jakarta EE 11** (CDI, JAX-RS, JPA, JSON-B, Servlet API)
+- **WildFly 36** (Application Server)
+- **MySQL 8.0+** (Base de datos relacional)
+- **ActiveMQ 5.18.3** (Message Broker)
+- **Maven** (Build tool)
 
 ## Arquitectura
 
 ### Capas implementadas:
 
 1. **Domain Layer** - Lógica de negocio y modelo de dominio
-   - Value Objects (21 objetos de valor)
-   - Aggregates (PatientProfile, LegalResponsibleProfile, TherapistProfile)
+   - 21 Value Objects (Identity, Address, BirthData, Age, etc.)
+   - 3 Aggregates (PatientProfile, LegalResponsibleProfile, TherapistProfile)
    - Commands y Queries (CQRS pattern)
    - Domain Services interfaces
-   - Factory para creación de objetos
+   - ProfileFactory para creación de objetos
 
-2. **Infrastructure Layer** - Persistencia y acceso a datos
-   - Repository interfaces
-   - Implementaciones JPA con EntityManager
-   - Configuración de persistencia
+2. **Infrastructure Layer** - Persistencia y comunicación
+   - Repository implementations con JPA
+   - ActiveMQ messaging infrastructure
+   - ServletActiveMQListener para consumo de mensajes
 
 3. **Application Layer** - Servicios de aplicación
    - Command Service implementations
-   - Query Service implementations  
-   - Dependency injection con CDI
+   - Query Service implementations
+   - Anti-Corruption Layer (ACL)
+   - Message processing services
 
-4. **Interfaces Layer** - API REST y comunicación externa
+4. **Interfaces Layer** - API REST
    - JAX-RS Controllers
    - Resources (DTOs)
    - Transform Assemblers
-   - Anti-Corruption Layer (ACL)
-
-## Tecnologías
-
-- **Jakarta EE 11** - Framework de aplicación empresarial
-- **WildFly 36** - Servidor de aplicaciones
-- **JDK 17** - Versión de Java
-- **Maven** - Sistema de construcción
-- **JPA/Hibernate** - Persistencia
-- **H2 Database** - Base de datos en memoria (configurable)
-- **CDI** - Dependency Injection
-- **JAX-RS** - REST API
 
 ## Estructura del Proyecto
 
@@ -50,150 +48,297 @@ src/main/java/com/soulware/therapysystem/profiles/profiles/
 │   │   ├── commands/       # Create/Delete commands
 │   │   ├── queries/        # GetAll/GetById queries
 │   │   ├── valueobjects/   # 21 value objects (Identity, Address, etc.)
+│   │   ├── repositories/   # Repository interfaces
 │   │   └── factories/      # ProfileFactory
 │   └── services/           # Domain service interfaces
 ├── infrastructure/
-│   └── persistence/jpa/
-│       ├── repositories/   # JPA repository implementations
-│       └── [interfaces]    # Repository interfaces
+│   ├── persistence/jpa/
+│   │   └── repositories/   # JPA repository implementations
+│   └── messaging/          # ActiveMQ messaging infrastructure
+│       ├── listeners/      # ServletContextListener for ActiveMQ
+│       ├── dto/           # Message DTOs
+│       └── services/      # Message processing services
 ├── application/
 │   ├── commandservices/   # Command service implementations
 │   ├── queryservices/     # Query service implementations
 │   └── acl/              # Anti-Corruption Layer implementation
 └── interfaces/
-    └── rest/
-        ├── resources/     # DTOs para request/response
-        ├── transform/     # Assemblers para conversión
-        └── [controllers]  # JAX-RS REST controllers
+    ├── rest/
+    │   ├── resources/     # DTOs para request/response
+    │   ├── transform/     # Assemblers para conversión
+    │   └── [controllers]  # JAX-RS REST controllers
+    └── acl/              # ACL interface definition
 ```
 
-## Endpoints REST
+## API REST Endpoints
+
+**Base URL**: `http://localhost:8080/Profiles-1.0-SNAPSHOT/profiles`
 
 ### Patient Profiles
-- `POST /profiles/api/v1/patient-profiles` - Crear perfil de paciente
-- `GET /profiles/api/v1/patient-profiles` - Obtener todos los perfiles
-- `GET /profiles/api/v1/patient-profiles/{id}` - Obtener perfil por ID
-- `DELETE /profiles/api/v1/patient-profiles/{id}` - Eliminar perfil
 
-### Legal Responsible Profiles  
-- `POST /profiles/api/v1/legal-responsible-profiles` - Crear perfil de responsable legal
-- `GET /profiles/api/v1/legal-responsible-profiles` - Obtener todos los perfiles
-- `GET /profiles/api/v1/legal-responsible-profiles/{id}` - Obtener perfil por ID
-- `DELETE /profiles/api/v1/legal-responsible-profiles/{id}` - Eliminar perfil
+#### Crear perfil de paciente
+```http
+POST /profiles/v1/patient-profiles
+Content-Type: application/json
+
+{
+  "firstNames": "Juan Carlos",
+  "paternalSurname": "Pérez",
+  "maternalSurname": "García",
+  "identityDocumentNumber": "12345678",
+  "documentType": "DNI",
+  "phone": "987654321",
+  "email": "juan.perez@email.com",
+  "birthPlace": "Lima",
+  "birthDate": "1990-05-15",
+  "firstAppointmentAge": 25,
+  "currentAge": 33,
+  "gender": "MALE",
+  "maritalStatus": "SINGLE",
+  "currentAddress": "Av. Principal 123",
+  "district": "Miraflores",
+  "province": "Lima",
+  "region": "Lima",
+  "country": "Perú",
+  "religion": "CHRISTIANITY",
+  "educationLevel": "Universitario",
+  "occupation": "Ingeniero",
+  "currentEducationalInstitution": "Universidad Nacional"
+}
+```
+
+#### Obtener todos los perfiles de pacientes
+```http
+GET /profiles/v1/patient-profiles
+```
+
+#### Obtener perfil de paciente por ID
+```http
+GET /profiles/v1/patient-profiles/{id}
+```
+
+#### Eliminar perfil de paciente
+```http
+DELETE /profiles/v1/patient-profiles/{id}
+```
+
+### Legal Responsible Profiles
+
+#### Crear perfil de responsable legal
+```http
+POST /profiles/v1/legal-responsible-profiles
+Content-Type: application/json
+
+{
+  "firstNames": "María Elena",
+  "paternalSurname": "González",
+  "maternalSurname": "López",
+  "identityDocumentNumber": "87654321",
+  "documentType": "DNI",
+  "phone": "912345678",
+  "email": "maria.gonzalez@email.com",
+  "relationship": "Madre"
+}
+```
+
+#### Obtener todos los perfiles de responsables legales
+```http
+GET /profiles/v1/legal-responsible-profiles
+```
+
+#### Obtener perfil de responsable legal por ID
+```http
+GET /profiles/v1/legal-responsible-profiles/{id}
+```
+
+#### Eliminar perfil de responsable legal
+```http
+DELETE /profiles/v1/legal-responsible-profiles/{id}
+```
 
 ### Therapist Profiles
-- `POST /profiles/api/v1/therapist-profiles` - Crear perfil de terapeuta
-- `GET /profiles/api/v1/therapist-profiles` - Obtener todos los perfiles
-- `GET /profiles/api/v1/therapist-profiles/{id}` - Obtener perfil por ID
-- `DELETE /profiles/api/v1/therapist-profiles/{id}` - Eliminar perfil
 
-## Deployment en WildFly
+#### Crear perfil de terapeuta
+```http
+POST /profiles/v1/therapist-profiles
+Content-Type: application/json
+
+{
+  "firstNames": "Ana Sofía",
+  "paternalSurname": "Rodríguez",
+  "maternalSurname": "Martínez",
+  "identityDocumentNumber": "11223344",
+  "documentType": "DNI",
+  "phone": "956789123",
+  "email": "ana.rodriguez@email.com",
+  "specialtyName": "Psicología Clínica",
+  "attentionPlaceAddress": "Consultorio Médico, Av. Salud 456"
+}
+```
+
+#### Obtener todos los perfiles de terapeutas
+```http
+GET /profiles/v1/therapist-profiles
+```
+
+#### Obtener perfil de terapeuta por ID
+```http
+GET /profiles/v1/therapist-profiles/{id}
+```
+
+#### Eliminar perfil de terapeuta
+```http
+DELETE /profiles/v1/therapist-profiles/{id}
+```
+
+## Enums Válidos
+
+### Gender
+- `MALE` - Masculino
+- `FEMALE` - Femenino
+- `OTHER` - Otro
+
+### MaritalStatus
+- `SINGLE` - Soltero/a
+- `MARRIED` - Casado/a
+- `DIVORCED` - Divorciado/a
+- `WIDOWED` - Viudo/a
+- `OTHER` - Otro
+
+### Religion
+- `JUDAISM` - Judaísmo
+- `CHRISTIANITY` - Cristianismo
+- `ISLAM` - Islam
+- `BUDDHISM` - Budismo
+- `OTHER` - Otra
+
+## Anti-Corruption Layer (ACL)
+
+El contexto expone una interfaz `ProfilesContextFacade` para que otros bounded contexts puedan acceder a información de perfiles sin acoplarse directamente al modelo interno.
+
+### Interfaz disponible:
+
+```java
+public interface ProfilesContextFacade {
+    
+    /**
+     * Buscar perfil de paciente por ID
+     */
+    Optional<PatientProfile> fetchPatientProfileById(Integer patientId);
+    
+    /**
+     * Buscar perfil de paciente por tipo y número de documento
+     */
+    Optional<PatientProfile> fetchPatientProfileByDocument(String documentType, String documentNumber);
+    
+    /**
+     * Verificar si existe un perfil de paciente
+     */
+    boolean patientProfileExists(Integer patientId);
+}
+```
+
+### Uso desde otros contextos:
+
+```java
+@Inject
+private ProfilesContextFacade profilesContext;
+
+// Verificar si existe un paciente
+boolean exists = profilesContext.patientProfileExists(123);
+
+// Obtener información completa del paciente
+Optional<PatientProfile> patient = profilesContext.fetchPatientProfileById(123);
+
+// Buscar paciente por documento
+Optional<PatientProfile> patient = profilesContext.fetchPatientProfileByDocument("DNI", "12345678");
+```
+
+## Mensajería JMS
+
+El contexto consume mensajes del CustomerService a través de ActiveMQ para crear automáticamente perfiles de pacientes.
+
+### Queue consumida:
+- **Queue**: `patient.processing.queue`
+- **Listener**: `ServletActiveMQListener`
+- **Procesamiento**: Automático al recibir mensajes JSON
+
+### Estructura del mensaje esperado:
+```json
+{
+  "messageId": "uuid",
+  "fileName": "archivo-excel",
+  "uploadedAt": "2025-10-05T01:26:38.0847096",
+  "patientData": {
+    "firstNames": "Test Patient",
+    "paternalSurname": "Apellido",
+    "maternalSurname": "Materno",
+    "documentType": "DNI",
+    "documentNumber": "12345678",
+    "phone": "987654321",
+    "email": "test@email.com",
+    "birthDate": "1990-01-15",
+    "birthPlace": null,
+    // ... otros campos opcionales
+    "legalResponsibles": [],
+    "therapists": null
+  },
+  "retryCount": 0,
+  "status": "PENDING"
+}
+```
+
+### Comportamiento del listener:
+- ✅ Consume mensajes automáticamente
+- ✅ Parsea JSON con Jakarta JSON-B
+- ✅ Maneja valores null con valores por defecto
+- ✅ Crea perfiles de paciente en la base de datos
+- ✅ Registra logs detallados del procesamiento
+
+## Instalación y Ejecución
 
 ### Prerrequisitos:
-1. WildFly 36 instalado y corriendo
-2. JDK 17 configurado
-3. Maven instalado
+- Java 17+
+- Maven 3.8+
+- WildFly 36
+- ActiveMQ 5.18.3
 
 ### Pasos:
 
 1. **Compilar el proyecto:**
    ```bash
-   mvn clean package
+   ./mvnw clean package
    ```
 
-2. **Configurar DataSource en WildFly:**
-   ```bash
-   # Conectar al CLI de WildFly
-   ./jboss-cli.sh --connect
-   
-   # Agregar el DataSource H2
-   /subsystem=datasources/data-source=ProfilesDS:add(jndi-name="java:jboss/datasources/ProfilesDS", connection-url="jdbc:h2:mem:profilesdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", driver-name=h2, user-name=sa, password=sa)
-   /subsystem=datasources/data-source=ProfilesDS:enable
-   ```
+2. **Desplegar en WildFly:**
+   - Copiar `target/Profiles-1.0-SNAPSHOT.war` a `wildfly/standalone/deployments/`
 
-3. **Deploy la aplicación:**
-   ```bash
-   # Copiar el WAR al directorio de deployment
-   cp target/Profiles-1.0-SNAPSHOT.war $WILDFLY_HOME/standalone/deployments/
-   
-   # O usar Maven plugin
-   mvn wildfly:deploy
-   ```
+3. **Configurar ActiveMQ:**
+   - Iniciar ActiveMQ en puerto `61616`
+   - Crear queue `patient.processing.queue`
 
-4. **Verificar deployment:**
-   - Aplicación disponible en: `http://localhost:8080/Profiles-1.0-SNAPSHOT/`
-   - API REST en: `http://localhost:8080/Profiles-1.0-SNAPSHOT/profiles/api/v1/`
+4. **Verificar despliegue:**
+   - API REST: `http://localhost:8080/Profiles-1.0-SNAPSHOT/profiles/v1/patient-profiles`
+   - Logs: WildFly console para ver procesamiento de mensajes
 
-## Ejemplos de uso
+## Base de Datos
 
-### Crear un Patient Profile:
-```bash
-curl -X POST http://localhost:8080/Profiles-1.0-SNAPSHOT/profiles/api/v1/patient-profiles \
-  -H "Content-Type: application/json" \
-  -d '{
-    "firstNames": "Juan Carlos",
-    "paternalSurname": "García",
-    "maternalSurname": "López",
-    "identityDocumentNumber": "12345678",
-    "documentType": "DNI",
-    "phone": "+51987654321",
-    "email": "juan.garcia@email.com",
-    "birthPlace": "Lima",
-    "birthDate": "1990-05-15",
-    "firstAppointmentAge": 25,
-    "currentAge": 34,
-    "gender": "MALE",
-    "maritalStatus": "SINGLE",
-    "currentAddress": "Av. Principal 123",
-    "district": "Miraflores",
-    "province": "Lima",
-    "region": "Lima",
-    "country": "Peru",
-    "religion": "CATHOLIC",
-    "educationLevel": "Universitario",
-    "occupation": "Ingeniero",
-    "currentEducationalInstitution": "Universidad Nacional"
-  }'
-```
+- **Tipo**: H2 in-memory
+- **Persistence Unit**: `profilesPU`
+- **Configuración**: `META-INF/persistence.xml`
+- **Inicialización**: Automática con JPA DDL
 
-### Obtener todos los Patient Profiles:
-```bash
-curl -X GET http://localhost:8080/Profiles-1.0-SNAPSHOT/profiles/api/v1/patient-profiles
-```
+### Tablas principales:
+- `patient_profiles`
+- `legal_responsible_profiles`
+- `therapist_profiles`
 
-## Configuración de Base de Datos
+## Logging
 
-Por defecto usa H2 en memoria. Para usar PostgreSQL o MySQL:
+El sistema genera logs detallados para:
+- ✅ Procesamiento de mensajes JMS
+- ✅ Creación/consulta de perfiles
+- ✅ Errores de validación
+- ✅ Operaciones de persistencia
 
-1. **Agregar driver a WildFly**
-2. **Modificar persistence.xml:**
-   ```xml
-   <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-   ```
-3. **Actualizar DataSource en WildFly**
-
-## Notas de Desarrollo
-
-- **Value Objects inmutables** - Todos los value objects son inmutables usando records o clases finales
-- **Aggregate boundaries** - Cada aggregate tiene su propio repositorio
-- **CQRS separation** - Commands y Queries separados con servicios dedicados
-- **CDI integration** - Dependency injection usando @ApplicationScoped y @Inject
-- **JPA mapping** - Agregados mapeados como entidades JPA con campos primitivos para mejor rendimiento
-- **Exception handling** - Manejo de errores en controllers con códigos HTTP apropiados
-
-## Testing
-
-Para ejecutar tests:
-```bash
-mvn test
-```
-
-## Arquitectura de la Solución
-
-Esta implementación sigue los principios de DDD:
-- **Bounded Context**: Profiles claramente delimitado
-- **Ubiquitous Language**: Términos del dominio de terapia
-- **Aggregates**: Consistencia transaccional
-- **Value Objects**: Inmutabilidad y validación
-- **Domain Services**: Lógica de dominio compleja
-- **Anti-Corruption Layer**: Protección del dominio
+Los logs aparecen en la consola de WildFly y ayudan a monitorear el funcionamiento del sistema.
