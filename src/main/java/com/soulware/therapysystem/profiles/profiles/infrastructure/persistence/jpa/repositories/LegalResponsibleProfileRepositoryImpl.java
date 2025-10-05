@@ -2,7 +2,7 @@ package com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.
 
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.LegalResponsibleProfile;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.LegalResponsibleProfileId;
-import com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.jpa.LegalResponsibleProfileRepository;
+import com.soulware.therapysystem.profiles.profiles.domain.model.repositories.LegalResponsibleProfileRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;

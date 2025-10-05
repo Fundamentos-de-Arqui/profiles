@@ -2,7 +2,7 @@ package com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.
 
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.TherapistProfile;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.TherapistProfileId;
-import com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.jpa.TherapistProfileRepository;
+import com.soulware.therapysystem.profiles.profiles.domain.model.repositories.TherapistProfileRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;

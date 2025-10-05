@@ -4,7 +4,7 @@ import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.Lega
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.*;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.LegalResponsibleProfileId;
 import com.soulware.therapysystem.profiles.profiles.domain.services.LegalResponsibleProfileQueryService;
-import com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.jpa.LegalResponsibleProfileRepository;
+import com.soulware.therapysystem.profiles.profiles.domain.model.repositories.LegalResponsibleProfileRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -30,5 +30,10 @@ public class LegalResponsibleProfileQueryServiceImpl implements LegalResponsible
     public Optional<LegalResponsibleProfile> handle(GetLegalResponsibleProfileByIdQuery query) {
         LegalResponsibleProfileId id = new LegalResponsibleProfileId(query.legalResponsibleProfileId());
         return legalResponsibleProfileRepository.findById(id);
+    }
+
+    @Override
+    public Optional<LegalResponsibleProfile> handle(GetLegalResponsibleProfileByDocumentQuery query) {
+        return legalResponsibleProfileRepository.findByDocumentTypeAndNumber(query.documentType(), query.documentNumber());
     }
 }

@@ -5,6 +5,7 @@ import com.soulware.therapysystem.profiles.profiles.domain.model.commands.Create
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.DeletePatientProfileCommand;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetAllPatientProfilesQuery;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetPatientProfileByIdQuery;
+import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetPatientProfileByDocumentQuery;
 import com.soulware.therapysystem.profiles.profiles.domain.services.PatientProfileCommandService;
 import com.soulware.therapysystem.profiles.profiles.domain.services.PatientProfileQueryService;
 import com.soulware.therapysystem.profiles.profiles.interfaces.rest.resources.CreatePatientProfileResource;
@@ -135,6 +136,36 @@ public class PatientProfileController {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                           .entity("Error retrieving patient profile")
+                          .build();
+        }
+    }
+
+    @GET
+    @Path("/document/{documentType}/{documentNumber}")
+    public Response getPatientProfileByDocument(@PathParam("documentType") String documentType, 
+                                                @PathParam("documentNumber") String documentNumber) {
+        try {
+            GetPatientProfileByDocumentQuery query = new GetPatientProfileByDocumentQuery(documentType, documentNumber);
+            Optional<PatientProfile> optionalProfile = queryService.handle(query);
+            
+            if (optionalProfile.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                              .entity("Patient profile not found with document: " + documentType + " - " + documentNumber)
+                              .build();
+            }
+            
+            PatientProfile profile = optionalProfile.get();
+            PatientProfileResource resource = 
+                PatientProfileResourceFromEntityAssembler.toResourceFromEntity(profile);
+            
+            return Response.ok(resource).build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                          .entity("ERROR: Invalid input data - " + e.getMessage())
+                          .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity("ERROR: Error retrieving patient profile by document")
                           .build();
         }
     }

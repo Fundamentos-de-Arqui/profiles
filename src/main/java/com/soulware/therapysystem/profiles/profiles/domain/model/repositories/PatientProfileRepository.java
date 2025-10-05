@@ -1,4 +1,4 @@
-package com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.jpa;
+package com.soulware.therapysystem.profiles.profiles.domain.model.repositories;
 
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.PatientProfileId;

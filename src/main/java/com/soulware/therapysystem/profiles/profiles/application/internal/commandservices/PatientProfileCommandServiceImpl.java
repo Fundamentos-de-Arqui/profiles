@@ -6,7 +6,7 @@ import com.soulware.therapysystem.profiles.profiles.domain.model.commands.Delete
 import com.soulware.therapysystem.profiles.profiles.domain.model.factories.ProfileFactory;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.*;
 import com.soulware.therapysystem.profiles.profiles.domain.services.PatientProfileCommandService;
-import com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.jpa.PatientProfileRepository;
+import com.soulware.therapysystem.profiles.profiles.domain.model.repositories.PatientProfileRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

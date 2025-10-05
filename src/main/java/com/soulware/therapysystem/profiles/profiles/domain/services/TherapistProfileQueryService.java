@@ -32,4 +32,11 @@ public interface TherapistProfileQueryService {
      * @return List of therapist profiles with the specified specialty.
      */
     List<TherapistProfile> handle(GetTherapistProfilesBySpecialtyQuery query);
+
+    /**
+     * Handle retrieving a therapist profile by document type and number.
+     * @param query Query containing the document type and number.
+     * @return Optional therapist profile.
+     */
+    Optional<TherapistProfile> handle(GetTherapistProfileByDocumentQuery query);
 }

@@ -5,6 +5,7 @@ import com.soulware.therapysystem.profiles.profiles.domain.model.commands.Create
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.DeleteLegalResponsibleProfileCommand;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetAllLegalResponsibleProfilesQuery;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetLegalResponsibleProfileByIdQuery;
+import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetLegalResponsibleProfileByDocumentQuery;
 import com.soulware.therapysystem.profiles.profiles.domain.services.LegalResponsibleProfileCommandService;
 import com.soulware.therapysystem.profiles.profiles.domain.services.LegalResponsibleProfileQueryService;
 import com.soulware.therapysystem.profiles.profiles.interfaces.rest.resources.CreateLegalResponsibleProfileResource;
@@ -135,6 +136,36 @@ public class LegalResponsibleProfileController {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                           .entity("Error retrieving legal responsible profile")
+                          .build();
+        }
+    }
+
+    @GET
+    @Path("/document/{documentType}/{documentNumber}")
+    public Response getLegalResponsibleProfileByDocument(@PathParam("documentType") String documentType, 
+                                                         @PathParam("documentNumber") String documentNumber) {
+        try {
+            GetLegalResponsibleProfileByDocumentQuery query = new GetLegalResponsibleProfileByDocumentQuery(documentType, documentNumber);
+            Optional<LegalResponsibleProfile> optionalProfile = queryService.handle(query);
+            
+            if (optionalProfile.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                              .entity("Legal responsible profile not found with document: " + documentType + " - " + documentNumber)
+                              .build();
+            }
+            
+            LegalResponsibleProfile profile = optionalProfile.get();
+            LegalResponsibleProfileResource resource = 
+                LegalResponsibleProfileResourceFromEntityAssembler.toResourceFromEntity(profile);
+            
+            return Response.ok(resource).build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                          .entity("ERROR: Invalid input data - " + e.getMessage())
+                          .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity("ERROR: Error retrieving legal responsible profile by document")
                           .build();
         }
     }

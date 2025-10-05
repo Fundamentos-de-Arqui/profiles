@@ -5,6 +5,7 @@ import com.soulware.therapysystem.profiles.profiles.domain.model.commands.Create
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.DeleteTherapistProfileCommand;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetAllTherapistProfilesQuery;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetTherapistProfileByIdQuery;
+import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetTherapistProfileByDocumentQuery;
 import com.soulware.therapysystem.profiles.profiles.domain.services.TherapistProfileCommandService;
 import com.soulware.therapysystem.profiles.profiles.domain.services.TherapistProfileQueryService;
 import com.soulware.therapysystem.profiles.profiles.interfaces.rest.resources.CreateTherapistProfileResource;
@@ -150,6 +151,36 @@ public class TherapistProfileController {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                           .entity("Error retrieving therapist profile")
+                          .build();
+        }
+    }
+
+    @GET
+    @Path("/document/{documentType}/{documentNumber}")
+    public Response getTherapistProfileByDocument(@PathParam("documentType") String documentType, 
+                                                   @PathParam("documentNumber") String documentNumber) {
+        try {
+            GetTherapistProfileByDocumentQuery query = new GetTherapistProfileByDocumentQuery(documentType, documentNumber);
+            Optional<TherapistProfile> optionalProfile = queryService.handle(query);
+            
+            if (optionalProfile.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                              .entity("Therapist profile not found with document: " + documentType + " - " + documentNumber)
+                              .build();
+            }
+            
+            TherapistProfile profile = optionalProfile.get();
+            TherapistProfileResource resource = 
+                TherapistProfileResourceFromEntityAssembler.toResourceFromEntity(profile);
+            
+            return Response.ok(resource).build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                          .entity("ERROR: Invalid input data - " + e.getMessage())
+                          .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                          .entity("ERROR: Error retrieving therapist profile by document")
                           .build();
         }
     }

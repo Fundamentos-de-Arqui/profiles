@@ -25,4 +25,11 @@ public interface LegalResponsibleProfileQueryService {
      * @return Optional legal responsible profile.
      */
     Optional<LegalResponsibleProfile> handle(GetLegalResponsibleProfileByIdQuery query);
+
+    /**
+     * Handle retrieving a legal responsible profile by document type and number.
+     * @param query Query containing the document type and number.
+     * @return Optional legal responsible profile.
+     */
+    Optional<LegalResponsibleProfile> handle(GetLegalResponsibleProfileByDocumentQuery query);
 }

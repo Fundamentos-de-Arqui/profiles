@@ -4,7 +4,7 @@ import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.Pati
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.*;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.PatientProfileId;
 import com.soulware.therapysystem.profiles.profiles.domain.services.PatientProfileQueryService;
-import com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.jpa.PatientProfileRepository;
+import com.soulware.therapysystem.profiles.profiles.domain.model.repositories.PatientProfileRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

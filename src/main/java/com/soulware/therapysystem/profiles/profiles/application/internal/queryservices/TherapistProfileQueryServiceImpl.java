@@ -4,7 +4,7 @@ import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.Ther
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.*;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.TherapistProfileId;
 import com.soulware.therapysystem.profiles.profiles.domain.services.TherapistProfileQueryService;
-import com.soulware.therapysystem.profiles.profiles.infrastructure.persistence.jpa.TherapistProfileRepository;
+import com.soulware.therapysystem.profiles.profiles.domain.model.repositories.TherapistProfileRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -35,5 +35,10 @@ public class TherapistProfileQueryServiceImpl implements TherapistProfileQuerySe
     @Override
     public List<TherapistProfile> handle(GetTherapistProfilesBySpecialtyQuery query) {
         return therapistProfileRepository.findBySpecialtyName(query.specialtyName());
+    }
+
+    @Override
+    public Optional<TherapistProfile> handle(GetTherapistProfileByDocumentQuery query) {
+        return therapistProfileRepository.findByDocumentTypeAndNumber(query.documentType(), query.documentNumber());
     }
 }
