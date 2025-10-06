@@ -98,15 +98,15 @@ public class PatientMessageProcessingService {
             data.birthPlace() != null ? data.birthPlace() : "No especificado", // Handle null birthPlace
             data.birthDate().toString(),  // birthDate as String
             data.ageFirstAppointment() != null ? data.ageFirstAppointment() : 0,   // Handle null age
-            data.ageCurrent() != null ? data.ageCurrent() : 0,           // Handle null age
-            data.gender() != null ? data.gender() : "OTHER", // Use valid Gender enum value
-            data.maritalStatus() != null ? data.maritalStatus() : "OTHER", // Use valid MaritalStatus enum value
+            data.ageCurrent() != null ? data.ageCurrent() : 0,
+            data.gender() != null ? data.gender() : "No especificado",
+            data.maritalStatus() != null ? data.maritalStatus() : "No especificado",
             data.currentAddress() != null ? data.currentAddress() : "No especificado",
             data.district() != null ? data.district() : "No especificado",
             data.province() != null ? data.province() : "No especificado",
             data.region() != null ? data.region() : "No especificado",
             data.country() != null ? data.country() : "No especificado",
-            data.religion() != null ? data.religion() : "OTHER", // Use valid Religion enum value
+            data.religion() != null ? data.religion() : "No especificado",
             data.educationLevel() != null ? data.educationLevel() : "No especificado",
             data.occupation() != null ? data.occupation() : "No especificado",
             data.currentEducationalInstitution() != null ? data.currentEducationalInstitution() : "No especificado"

@@ -32,7 +32,7 @@ public class TherapistProfileCommandServiceImpl implements TherapistProfileComma
             command.paternalSurname(),
             command.maternalSurname(),
             command.identityDocumentNumber(),
-            DocumentType.valueOf(command.documentType()),
+            new DocumentType(command.documentType()),
             command.phone(),
             command.email()
         );

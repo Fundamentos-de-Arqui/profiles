@@ -62,7 +62,7 @@ public class TherapistProfile {
         this.paternalSurname = identity.paternalSurname().value();
         this.maternalSurname = identity.maternalSurname() != null ? identity.maternalSurname().value() : null;
         this.identityDocumentNumber = identity.identityDocumentNumber().value();
-        this.documentType = identity.documentType().name();
+        this.documentType = identity.documentType().value();
         this.phone = identity.phone().value();
         this.email = identity.email().value();
         this.specialtyName = specialty.name();
@@ -96,7 +96,7 @@ public class TherapistProfile {
             new PaternalSurname(this.paternalSurname),
             this.maternalSurname != null ? new MaternalSurname(this.maternalSurname) : null,
             new IdentityDocumentNumber(this.identityDocumentNumber),
-            DocumentType.valueOf(this.documentType.toUpperCase()),
+            new DocumentType(this.documentType),
             new Phone(this.phone),
             new Email(this.email)
         );

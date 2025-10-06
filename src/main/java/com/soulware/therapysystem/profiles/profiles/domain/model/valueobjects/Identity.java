@@ -53,22 +53,18 @@ public final class Identity {
     }
 
     private void validateDocumentTypeAndNumber(DocumentType documentType, IdentityDocumentNumber number) {
-        switch (documentType) {
-            case DNI:
-                if (!number.isValidDNI()) {
-                    throw new IllegalArgumentException("Invalid DNI format");
-                }
-                break;
-            case RUC:
-                if (!number.isValidRUC()) {
-                    throw new IllegalArgumentException("Invalid RUC format");
-                }
-                break;
-            case PASSPORT:
-            case OTHER:
-                // PASSPORT y OTHER pueden tener formatos variados, no validamos formato específico
-                break;
+        String docType = documentType.value().toUpperCase();
+        
+        if ("DNI".equals(docType)) {
+            if (!number.isValidDNI()) {
+                throw new IllegalArgumentException("Invalid DNI format");
+            }
+        } else if ("RUC".equals(docType)) {
+            if (!number.isValidRUC()) {
+                throw new IllegalArgumentException("Invalid RUC format");
+            }
         }
+        // Para PASSPORT, OTHER y otros tipos, no validamos formato específico
     }
 
     public FirstNames firstNames() {
@@ -120,7 +116,7 @@ public final class Identity {
                Objects.equals(paternalSurname, identity.paternalSurname) &&
                Objects.equals(maternalSurname, identity.maternalSurname) &&
                Objects.equals(identityDocumentNumber, identity.identityDocumentNumber) &&
-               documentType == identity.documentType &&
+               Objects.equals(documentType, identity.documentType) &&
                Objects.equals(phone, identity.phone) &&
                Objects.equals(email, identity.email);
     }

@@ -12,7 +12,7 @@ public class LegalResponsibleProfileResourceFromEntityAssembler {
                 entity.getIdentity().paternalSurname().value(),
                 entity.getIdentity().maternalSurname().value(),
                 entity.getIdentity().identityDocumentNumber().value(),
-                entity.getIdentity().documentType().name(),
+                entity.getIdentity().documentType().value(),
                 entity.getIdentity().phone().value(),
                 entity.getIdentity().email().value(),
                 entity.getRelationship().description()

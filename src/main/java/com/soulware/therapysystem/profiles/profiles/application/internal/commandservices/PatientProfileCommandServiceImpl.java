@@ -33,7 +33,7 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
             command.paternalSurname(),
             command.maternalSurname(),
             command.identityDocumentNumber(),
-            DocumentType.valueOf(command.documentType()),
+            new DocumentType(command.documentType()),
             command.phone(),
             command.email()
         );
@@ -71,10 +71,10 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
             identity,
             birthData,
             age,
-            Gender.valueOf(command.gender()),
-            MaritalStatus.valueOf(command.maritalStatus()),
+            new Gender(command.gender()),
+            new MaritalStatus(command.maritalStatus()),
             address,
-            Religion.valueOf(command.religion()),
+            new Religion(command.religion()),
             educationData
         );
 

@@ -125,21 +125,21 @@ public class PatientProfile {
         this.paternalSurname = identity.paternalSurname().value();
         this.maternalSurname = identity.maternalSurname() != null ? identity.maternalSurname().value() : null;
         this.identityDocumentNumber = identity.identityDocumentNumber().value();
-        this.documentType = identity.documentType().name();
+        this.documentType = identity.documentType().value();
         this.phone = identity.phone().value();
         this.email = identity.email().value();
         this.birthPlace = birthData.birthPlace();
         this.birthDate = birthData.birthDate();
         this.firstAppointmentAge = age.firstAppointment();
         this.currentAge = age.current();
-        this.gender = gender.name();
-        this.maritalStatus = maritalStatus.name();
+        this.gender = gender.value();
+        this.maritalStatus = maritalStatus.value();
         this.currentAddress = address.currentAddress();
         this.district = address.district();
         this.province = address.province();
         this.region = address.region();
         this.country = address.country();
-        this.religion = religion.name();
+        this.religion = religion.value();
         this.educationLevel = educationData.educationLevel();
         this.occupation = educationData.occupation();
         this.currentEducationalInstitution = educationData.currentEducationalInstitution();
@@ -170,7 +170,7 @@ public class PatientProfile {
         if (newMaritalStatus == null) {
             throw new IllegalArgumentException("New marital status cannot be null");
         }
-        this.maritalStatus = newMaritalStatus.name();
+        this.maritalStatus = newMaritalStatus.value();
     }
 
     // Método de negocio: actualizar religión
@@ -178,7 +178,7 @@ public class PatientProfile {
         if (newReligion == null) {
             throw new IllegalArgumentException("New religion cannot be null");
         }
-        this.religion = newReligion.name();
+        this.religion = newReligion.value();
     }
 
     // Método de negocio: actualizar datos de educación
@@ -202,7 +202,7 @@ public class PatientProfile {
             new PaternalSurname(this.paternalSurname),
             this.maternalSurname != null ? new MaternalSurname(this.maternalSurname) : null,
             new IdentityDocumentNumber(this.identityDocumentNumber),
-            DocumentType.valueOf(this.documentType.toUpperCase()),
+            new DocumentType(this.documentType),
             new Phone(this.phone),
             new Email(this.email)
         );
@@ -217,11 +217,11 @@ public class PatientProfile {
     }
 
     public Gender getGender() {
-        return Gender.valueOf(this.gender.toUpperCase());
+        return new Gender(this.gender);
     }
 
     public MaritalStatus getMaritalStatus() {
-        return MaritalStatus.valueOf(this.maritalStatus.toUpperCase());
+        return new MaritalStatus(this.maritalStatus);
     }
 
     public Address getAddress() {
@@ -235,7 +235,7 @@ public class PatientProfile {
     }
 
     public Religion getReligion() {
-        return Religion.valueOf(this.religion.toUpperCase());
+        return new Religion(this.religion);
     }
 
     public EducationData getEducationData() {

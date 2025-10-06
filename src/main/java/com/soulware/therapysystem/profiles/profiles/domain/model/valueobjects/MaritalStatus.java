@@ -1,24 +1,36 @@
 package com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects;
 
-public enum MaritalStatus {
-    SINGLE("Soltero/a"),
-    MARRIED("Casado/a"),
-    DIVORCED("Divorciado/a"),
-    WIDOWED("Viudo/a"),
-    OTHER("Otro");
+import java.util.Objects;
 
-    private final String description;
+public final class MaritalStatus {
+    private final String value;
 
-    MaritalStatus(String description) {
-        this.description = description;
+    public MaritalStatus(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Marital status value cannot be null or empty");
+        }
+        this.value = value.trim();
     }
 
-    public String getDescription() {
-        return description;
+    public String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        MaritalStatus that = (MaritalStatus) obj;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 
     @Override
     public String toString() {
-        return name() + ": " + description;
+        return value;
     }
 }

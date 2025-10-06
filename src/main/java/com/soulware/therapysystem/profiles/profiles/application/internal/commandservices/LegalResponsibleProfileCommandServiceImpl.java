@@ -32,7 +32,7 @@ public class LegalResponsibleProfileCommandServiceImpl implements LegalResponsib
             command.paternalSurname(),
             command.maternalSurname(),
             command.identityDocumentNumber(),
-            DocumentType.valueOf(command.documentType()),
+            new DocumentType(command.documentType()),
             command.phone(),
             command.email()
         );

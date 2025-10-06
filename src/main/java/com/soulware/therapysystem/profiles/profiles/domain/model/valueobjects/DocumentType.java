@@ -1,23 +1,36 @@
 package com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects;
 
-public enum DocumentType {
-    DNI("Documento Nacional de Identidad"),
-    RUC("Registro Único del Contribuyente"),
-    PASSPORT("Pasaporte"),
-    OTHER("Otro");
+import java.util.Objects;
 
-    private final String description;
+public final class DocumentType {
+    private final String value;
 
-    DocumentType(String description) {
-        this.description = description;
+    public DocumentType(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Document type value cannot be null or empty");
+        }
+        this.value = value.trim();
     }
 
-    public String getDescription() {
-        return description;
+    public String value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        DocumentType that = (DocumentType) obj;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 
     @Override
     public String toString() {
-        return name() + ": " + description;
+        return value;
     }
 }

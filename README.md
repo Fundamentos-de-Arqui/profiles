@@ -7,7 +7,7 @@ Bounded Context para la gestión de perfiles de pacientes, responsables legales 
 - **Java 17**
 - **Jakarta EE 11** (CDI, JAX-RS, JPA, JSON-B, Servlet API)
 - **WildFly 36** (Application Server)
-- **MySQL 8.0+** (Base de datos relacional)
+- **H2 Database** (Base de datos en memoria)
 - **ActiveMQ 5.18.3** (Message Broker)
 - **Maven** (Build tool)
 
@@ -191,26 +191,21 @@ GET /profiles/v1/therapist-profiles/{id}
 DELETE /profiles/v1/therapist-profiles/{id}
 ```
 
-## Enums Válidos
+## Value Objects de Tipo String
 
-### Gender
-- `MALE` - Masculino
-- `FEMALE` - Femenino
-- `OTHER` - Otro
+Los siguientes campos aceptan cualquier valor de tipo String válido. Ya no están restringidos a enums fijos, permitiendo flexibilidad para datos provenientes de fuentes externas como Excel:
 
-### MaritalStatus
-- `SINGLE` - Soltero/a
-- `MARRIED` - Casado/a
-- `DIVORCED` - Divorciado/a
-- `WIDOWED` - Viudo/a
-- `OTHER` - Otro
+### Gender (Género)
+- Acepta cualquier valor String (ej: "Masculino", "Femenino", "Otro", etc.)
 
-### Religion
-- `JUDAISM` - Judaísmo
-- `CHRISTIANITY` - Cristianismo
-- `ISLAM` - Islam
-- `BUDDHISM` - Budismo
-- `OTHER` - Otra
+### MaritalStatus (Estado Civil)
+- Acepta cualquier valor String (ej: "Soltero", "Casado", "Divorciado", "Viudo", "Conviviente", etc.)
+
+### Religion (Religión)
+- Acepta cualquier valor String (ej: "Cristianismo", "Islam", "Budismo", "Judaísmo", "Otro", etc.)
+
+### DocumentType (Tipo de Documento)
+- Acepta cualquier valor String (ej: "DNI", "RUC", "Pasaporte", "Cédula", "Otro", etc.)
 
 ## Anti-Corruption Layer (ACL)
 
