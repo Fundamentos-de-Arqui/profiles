@@ -9,12 +9,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bfa63adb-deec-4262-95f5-a37b69a60753" name="Changes" comment="" />
+    <list default="true" id="bfa63adb-deec-4262-95f5-a37b69a60753" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/soulware/therapysystem/profiles/profiles/infrastructure/persistence/jpa/repositories/PatientProfileRepositoryImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/soulware/therapysystem/profiles/profiles/infrastructure/persistence/jpa/repositories/PatientProfileRepositoryImpl.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -26,6 +38,7 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="33TmrjFvjgjqtBZcTnLgWZL4DRh" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -33,8 +46,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "JBoss/WildFly Server.JBoss/WildFly 36.0.0.Final.executor": "Run",
+    "JUnit.PatientProfileCommandServiceIntegrationTest.executor": "Run",
+    "JUnit.PatientProfileTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "test-services",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -46,7 +62,37 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JUnit.PatientProfileCommandServiceIntegrationTest">
+    <configuration default="true" type="AZURE_FUNCTION_SUPPORT" factoryName="Run Functions">
+      <option name="appName" />
+      <option name="appServicePlanName" />
+      <option name="appServicePlanResourceGroup" />
+      <option name="appSettingsKey" value="f72d85b5-b758-42b8-9d08-5856e84eefcc" />
+      <option name="artifact" />
+      <option name="debugOptions" />
+      <option name="deployment" />
+      <option name="deploymentStagingDirectoryPath" />
+      <option name="funcPath" />
+      <option name="functionHostArguments" />
+      <option name="hostJsonPath" />
+      <option name="insightsName" />
+      <option name="instrumentationKey" />
+      <option name="javaVersion" />
+      <option name="localSettingsJsonPath" />
+      <option name="moduleName" />
+      <option name="os" />
+      <option name="pricingTier" />
+      <option name="providerMap">
+        <map />
+      </option>
+      <option name="region" />
+      <option name="resourceGroup" />
+      <option name="stagingFolder" />
+      <option name="subscription" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="JBoss/WildFly 36.0.0.Final" type="JBossConfiguration" factoryName="Local" APPLICATION_SERVER_NAME="JBoss/WildFly 36.0.0.Final" ALTERNATIVE_JRE_ENABLED="false">
       <deployment>
         <artifact name="Profiles:war exploded">
@@ -54,8 +100,8 @@
         </artifact>
       </deployment>
       <server-settings>
-        <option name="BINDING_SET_NAME" value="" />
         <option name="SERVER" value="" />
+        <option name="BINDING_SET_NAME" value="" />
         <option name="DOMAIN" value="false" />
         <option name="SERVER_GROUP" value="" />
         <option name="USERNAME" value="" />
@@ -84,6 +130,47 @@
         </option>
       </method>
     </configuration>
+    <configuration name="PatientProfileCommandServiceIntegrationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Profiles" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.soulware.therapysystem.profiles.profiles.application.internal.commandservices.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.soulware.therapysystem.profiles.profiles.application.internal.commandservices" />
+      <option name="MAIN_CLASS_NAME" value="com.soulware.therapysystem.profiles.profiles.application.internal.commandservices.PatientProfileCommandServiceIntegrationTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PatientProfileTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Profiles" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.soulware.therapysystem.profiles.profiles.domain.model.aggregates" />
+      <option name="MAIN_CLASS_NAME" value="com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="JBoss/WildFly Server.JBoss/WildFly 36.0.0.Final" />
+      <item itemvalue="JUnit.PatientProfileCommandServiceIntegrationTest" />
+      <item itemvalue="JUnit.PatientProfileTest" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.PatientProfileCommandServiceIntegrationTest" />
+        <item itemvalue="JUnit.PatientProfileTest" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -108,5 +195,14 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="ignore .idea/ files" />
+    <option name="LAST_COMMIT_MESSAGE" value="ignore .idea/ files" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/profiles$PatientProfileCommandServiceIntegrationTest.ic" NAME="PatientProfileCommandServiceIntegrationTest Coverage Results" MODIFIED="1759811192074" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>com.soulware.therapysystem.profiles.profiles.application.internal.commandservices.*</FILTER>
+    </SUITE>
   </component>
 </project>
