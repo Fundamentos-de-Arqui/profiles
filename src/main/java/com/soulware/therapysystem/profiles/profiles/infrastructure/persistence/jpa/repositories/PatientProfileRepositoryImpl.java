@@ -17,6 +17,12 @@ public class PatientProfileRepositoryImpl implements PatientProfileRepository {
     @PersistenceContext(unitName = "profilesPU")
     private EntityManager entityManager;
 
+    public PatientProfileRepositoryImpl() {}
+
+    public PatientProfileRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     @Override
     public PatientProfile save(PatientProfile patientProfile) {
         PatientProfileId profileId = patientProfile.getId();
