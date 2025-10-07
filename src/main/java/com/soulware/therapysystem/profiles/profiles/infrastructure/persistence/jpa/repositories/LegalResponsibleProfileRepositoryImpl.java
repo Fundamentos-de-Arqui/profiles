@@ -17,6 +17,12 @@ public class LegalResponsibleProfileRepositoryImpl implements LegalResponsiblePr
     @PersistenceContext(unitName = "profilesPU")
     private EntityManager entityManager;
 
+    public LegalResponsibleProfileRepositoryImpl(){}
+
+    public LegalResponsibleProfileRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     @Override
     public LegalResponsibleProfile save(LegalResponsibleProfile legalResponsibleProfile) {
         LegalResponsibleProfileId profileId = legalResponsibleProfile.getId();
