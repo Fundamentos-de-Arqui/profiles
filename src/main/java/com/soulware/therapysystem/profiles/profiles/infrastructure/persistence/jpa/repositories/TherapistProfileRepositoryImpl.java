@@ -17,6 +17,10 @@ public class TherapistProfileRepositoryImpl implements TherapistProfileRepositor
     @PersistenceContext(unitName = "profilesPU")
     private EntityManager entityManager;
 
+    public TherapistProfileRepositoryImpl(){}
+    public TherapistProfileRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
     @Override
     public TherapistProfile save(TherapistProfile therapistProfile) {
         TherapistProfileId profileId = therapistProfile.getId();
