@@ -72,13 +72,13 @@ src/main/java/com/soulware/therapysystem/profiles/profiles/
 
 ## API REST Endpoints
 
-**Base URL**: `http://localhost:8080/Profiles-1.0-SNAPSHOT/profiles`
+**Base URL**: `http://localhost:8080/Profiles-1.0-SNAPSHOT/api/v1/`
 
 ### Patient Profiles
 
 #### Crear perfil de paciente
 ```http
-POST /profiles/v1/patient-profiles
+POST /v1/patient-profiles
 Content-Type: application/json
 
 {
@@ -109,24 +109,29 @@ Content-Type: application/json
 
 #### Obtener todos los perfiles de pacientes
 ```http
-GET /profiles/v1/patient-profiles
+GET /v1/patient-profiles
 ```
 
 #### Obtener perfil de paciente por ID
 ```http
-GET /profiles/v1/patient-profiles/{id}
+GET /v1/patient-profiles/{id}
+```
+
+#### Obtener perfil de paciente por documento
+```http
+GET /v1/patient-profiles/document/{documentType}/{documentNumber}
 ```
 
 #### Eliminar perfil de paciente
 ```http
-DELETE /profiles/v1/patient-profiles/{id}
+DELETE /v1/patient-profiles/{id}
 ```
 
 ### Legal Responsible Profiles
 
 #### Crear perfil de responsable legal
 ```http
-POST /profiles/v1/legal-responsible-profiles
+POST /v1/legal-responsible-profiles
 Content-Type: application/json
 
 {
@@ -143,24 +148,29 @@ Content-Type: application/json
 
 #### Obtener todos los perfiles de responsables legales
 ```http
-GET /profiles/v1/legal-responsible-profiles
+GET /v1/legal-responsible-profiles
 ```
 
 #### Obtener perfil de responsable legal por ID
 ```http
-GET /profiles/v1/legal-responsible-profiles/{id}
+GET /v1/legal-responsible-profiles/{id}
+```
+
+#### Obtener perfil de responsable legal por documento
+```http
+GET /v1/legal-responsible-profiles/document/{documentType}/{documentNumber}
 ```
 
 #### Eliminar perfil de responsable legal
 ```http
-DELETE /profiles/v1/legal-responsible-profiles/{id}
+DELETE /v1/legal-responsible-profiles/{id}
 ```
 
 ### Therapist Profiles
 
 #### Crear perfil de terapeuta
 ```http
-POST /profiles/v1/therapist-profiles
+POST /v1/therapist-profiles
 Content-Type: application/json
 
 {
@@ -178,34 +188,23 @@ Content-Type: application/json
 
 #### Obtener todos los perfiles de terapeutas
 ```http
-GET /profiles/v1/therapist-profiles
+GET /v1/therapist-profiles
 ```
 
 #### Obtener perfil de terapeuta por ID
 ```http
-GET /profiles/v1/therapist-profiles/{id}
+GET /v1/therapist-profiles/{id}
+```
+
+#### Obtener perfil de terapeuta por documento
+```http
+GET /v1/therapist-profiles/document/{documentType}/{documentNumber}
 ```
 
 #### Eliminar perfil de terapeuta
 ```http
-DELETE /profiles/v1/therapist-profiles/{id}
+DELETE /v1/therapist-profiles/{id}
 ```
-
-## Value Objects de Tipo String
-
-Los siguientes campos aceptan cualquier valor de tipo String válido. Ya no están restringidos a enums fijos, permitiendo flexibilidad para datos provenientes de fuentes externas como Excel:
-
-### Gender (Género)
-- Acepta cualquier valor String (ej: "Masculino", "Femenino", "Otro", etc.)
-
-### MaritalStatus (Estado Civil)
-- Acepta cualquier valor String (ej: "Soltero", "Casado", "Divorciado", "Viudo", "Conviviente", etc.)
-
-### Religion (Religión)
-- Acepta cualquier valor String (ej: "Cristianismo", "Islam", "Budismo", "Judaísmo", "Otro", etc.)
-
-### DocumentType (Tipo de Documento)
-- Acepta cualquier valor String (ej: "DNI", "RUC", "Pasaporte", "Cédula", "Otro", etc.)
 
 ## Anti-Corruption Layer (ACL)
 
@@ -313,7 +312,7 @@ El contexto consume mensajes del CustomerService a través de ActiveMQ para crea
    - Crear queue `patient.processing.queue`
 
 4. **Verificar despliegue:**
-   - API REST: `http://localhost:8080/Profiles-1.0-SNAPSHOT/profiles/v1/patient-profiles`
+   - API REST: `http://localhost:8080/Profiles-1.0-SNAPSHOT/api/v1/patient-profiles`
    - Logs: WildFly console para ver procesamiento de mensajes
 
 ## Base de Datos
