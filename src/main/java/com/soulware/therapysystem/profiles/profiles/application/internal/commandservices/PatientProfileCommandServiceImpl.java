@@ -66,6 +66,12 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
             command.currentEducationalInstitution()
         );
 
+        // Create ReferredTherapist if data is provided
+        ReferredTherapist referredTherapist = null;
+        if (command.referredTherapistName() != null && !command.referredTherapistName().trim().isEmpty()) {
+            referredTherapist = ProfileFactory.createReferredTherapist(command.referredTherapistName());
+        }
+
         // Create PatientProfile using factory (sin ID, será generado por la DB)
         PatientProfile patientProfile = ProfileFactory.createPatientProfile(
             identity,
@@ -75,7 +81,8 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
             new MaritalStatus(command.maritalStatus()),
             address,
             new Religion(command.religion()),
-            educationData
+            educationData,
+            referredTherapist
         );
 
         // Save using repository - let domain/infrastructure exceptions propagate

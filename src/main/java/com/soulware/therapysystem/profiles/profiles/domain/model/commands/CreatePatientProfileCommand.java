@@ -26,7 +26,8 @@ public record CreatePatientProfileCommand(
     String religion,
     String educationLevel,
     String occupation,
-    String currentEducationalInstitution
+    String currentEducationalInstitution,
+    String referredTherapistName
 ) {
 
     public CreatePatientProfileCommand {

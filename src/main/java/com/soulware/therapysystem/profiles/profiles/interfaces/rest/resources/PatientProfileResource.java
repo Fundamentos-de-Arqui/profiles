@@ -23,5 +23,6 @@ public record PatientProfileResource(
         String religion,
         String educationLevel,
         String occupation,
-        String currentEducationalInstitution
+        String currentEducationalInstitution,
+        String referredTherapistName
 ) {}

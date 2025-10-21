@@ -22,7 +22,8 @@ public record CreatePatientProfileResource(
         String religion,
         String educationLevel,
         String occupation,
-        String currentEducationalInstitution
+        String currentEducationalInstitution,
+        String referredTherapistName
 ) {
     public CreatePatientProfileResource {
         if (firstNames == null || firstNames.isBlank())

@@ -28,7 +28,8 @@ public class CreatePatientProfileCommandFromResourceAssembler {
                 resource.religion(),
                 resource.educationLevel(),
                 resource.occupation(),
-                resource.currentEducationalInstitution()
+                resource.currentEducationalInstitution(),
+                resource.referredTherapistName()
         );
     }
 }

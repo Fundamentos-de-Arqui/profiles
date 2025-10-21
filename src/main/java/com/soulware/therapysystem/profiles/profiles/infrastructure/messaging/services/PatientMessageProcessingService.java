@@ -109,7 +109,8 @@ public class PatientMessageProcessingService {
             data.religion() != null ? data.religion() : "No especificado",
             data.educationLevel() != null ? data.educationLevel() : "No especificado",
             data.occupation() != null ? data.occupation() : "No especificado",
-            data.currentEducationalInstitution() != null ? data.currentEducationalInstitution() : "No especificado"
+            data.currentEducationalInstitution() != null ? data.currentEducationalInstitution() : "No especificado",
+            data.referredTherapistName()
         );
     }
     

@@ -19,6 +19,31 @@ public class ProfileFactory {
                                                      MaritalStatus maritalStatus, 
                                                      Address address, 
                                                      Religion religion, 
+                                                     EducationData educationData,
+                                                     ReferredTherapist referredTherapist) {
+        return new PatientProfile(
+            identity,
+            birthData,
+            age,
+            gender,
+            maritalStatus,
+            address,
+            religion,
+            educationData,
+            referredTherapist
+        );
+    }
+
+    /**
+     * Crea un nuevo PatientProfile sin ReferredTherapist (backward compatibility).
+     */
+    public static PatientProfile createPatientProfile(Identity identity, 
+                                                     BirthData birthData, 
+                                                     Age age, 
+                                                     Gender gender, 
+                                                     MaritalStatus maritalStatus, 
+                                                     Address address, 
+                                                     Religion religion, 
                                                      EducationData educationData) {
         return new PatientProfile(
             identity,
@@ -28,7 +53,8 @@ public class ProfileFactory {
             maritalStatus,
             address,
             religion,
-            educationData
+            educationData,
+            null
         );
     }
 
@@ -131,5 +157,12 @@ public class ProfileFactory {
      */
     public static AttentionPlace createAttentionPlace(String address) {
         return new AttentionPlace(address);
+    }
+
+    /**
+     * Método de conveniencia para crear ReferredTherapist.
+     */
+    public static ReferredTherapist createReferredTherapist(String therapistName) {
+        return new ReferredTherapist(therapistName);
     }
 }

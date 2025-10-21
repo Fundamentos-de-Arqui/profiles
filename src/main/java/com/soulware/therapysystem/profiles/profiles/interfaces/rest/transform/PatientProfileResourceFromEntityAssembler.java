@@ -6,6 +6,7 @@ import com.soulware.therapysystem.profiles.profiles.interfaces.rest.resources.Pa
 public class PatientProfileResourceFromEntityAssembler {
     
     public static PatientProfileResource toResourceFromEntity(PatientProfile entity) {
+        var referredTherapist = entity.getReferredTherapist();
         return new PatientProfileResource(
                 entity.getId().value(),
                 entity.getIdentity().firstNames().value(),
@@ -29,7 +30,8 @@ public class PatientProfileResourceFromEntityAssembler {
                 entity.getReligion().value(),
                 entity.getEducationData().educationLevel(),
                 entity.getEducationData().occupation(),
-                entity.getEducationData().currentEducationalInstitution()
+                entity.getEducationData().currentEducationalInstitution(),
+                referredTherapist != null ? referredTherapist.therapistName() : null
         );
     }
 }
