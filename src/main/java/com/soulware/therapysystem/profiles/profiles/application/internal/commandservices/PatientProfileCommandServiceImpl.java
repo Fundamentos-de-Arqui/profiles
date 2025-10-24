@@ -3,6 +3,8 @@ package com.soulware.therapysystem.profiles.profiles.application.internal.comman
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile;
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.CreatePatientProfileCommand;
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.DeletePatientProfileCommand;
+import com.soulware.therapysystem.profiles.profiles.domain.model.commands.AssignLegalResponsibleCommand;
+import com.soulware.therapysystem.profiles.profiles.domain.model.commands.AssignTherapistCommand;
 import com.soulware.therapysystem.profiles.profiles.domain.model.factories.ProfileFactory;
 import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.*;
 import com.soulware.therapysystem.profiles.profiles.domain.services.PatientProfileCommandService;
@@ -82,7 +84,9 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
             address,
             new Religion(command.religion()),
             educationData,
-            referredTherapist
+            referredTherapist,
+            command.legalResponsibleId(),
+            command.therapistId()
         );
 
         // Save using repository - let domain/infrastructure exceptions propagate
@@ -101,6 +105,48 @@ public class PatientProfileCommandServiceImpl implements PatientProfileCommandSe
             System.err.println("Error deleting patient profile: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public Optional<PatientProfile> handle(AssignLegalResponsibleCommand command) {
+        try {
+            PatientProfileId id = new PatientProfileId(command.patientProfileId());
+            Optional<PatientProfile> patientOpt = patientProfileRepository.findById(id);
+            
+            if (patientOpt.isPresent()) {
+                PatientProfile patient = patientOpt.get();
+                patient.assignLegalResponsible(command.legalResponsibleId());
+                PatientProfile updated = patientProfileRepository.save(patient);
+                return Optional.of(updated);
+            }
+            
+            return Optional.empty();
+        } catch (Exception e) {
+            System.err.println("Error assigning legal responsible to patient profile: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<PatientProfile> handle(AssignTherapistCommand command) {
+        try {
+            PatientProfileId id = new PatientProfileId(command.patientProfileId());
+            Optional<PatientProfile> patientOpt = patientProfileRepository.findById(id);
+            
+            if (patientOpt.isPresent()) {
+                PatientProfile patient = patientOpt.get();
+                patient.assignTherapist(command.therapistId());
+                PatientProfile updated = patientProfileRepository.save(patient);
+                return Optional.of(updated);
+            }
+            
+            return Optional.empty();
+        } catch (Exception e) {
+            System.err.println("Error assigning therapist to patient profile: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 }

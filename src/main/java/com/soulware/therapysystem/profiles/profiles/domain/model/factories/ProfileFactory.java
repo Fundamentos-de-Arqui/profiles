@@ -20,7 +20,9 @@ public class ProfileFactory {
                                                      Address address, 
                                                      Religion religion, 
                                                      EducationData educationData,
-                                                     ReferredTherapist referredTherapist) {
+                                                     ReferredTherapist referredTherapist,
+                                                     Integer legalResponsibleId,
+                                                     Integer therapistId) {
         return new PatientProfile(
             identity,
             birthData,
@@ -30,12 +32,14 @@ public class ProfileFactory {
             address,
             religion,
             educationData,
-            referredTherapist
+            referredTherapist,
+            legalResponsibleId,
+            therapistId
         );
     }
 
     /**
-     * Crea un nuevo PatientProfile sin ReferredTherapist (backward compatibility).
+     * Crea un nuevo PatientProfile sin ReferredTherapist ni relaciones (backward compatibility).
      */
     public static PatientProfile createPatientProfile(Identity identity, 
                                                      BirthData birthData, 
@@ -54,6 +58,35 @@ public class ProfileFactory {
             address,
             religion,
             educationData,
+            null,
+            null,
+            null
+        );
+    }
+
+    /**
+     * Crea un nuevo PatientProfile sin ID, pero con ReferredTherapist (backward compatibility).
+     */
+    public static PatientProfile createPatientProfile(Identity identity, 
+                                                     BirthData birthData, 
+                                                     Age age, 
+                                                     Gender gender, 
+                                                     MaritalStatus maritalStatus, 
+                                                     Address address, 
+                                                     Religion religion, 
+                                                     EducationData educationData,
+                                                     ReferredTherapist referredTherapist) {
+        return new PatientProfile(
+            identity,
+            birthData,
+            age,
+            gender,
+            maritalStatus,
+            address,
+            religion,
+            educationData,
+            referredTherapist,
+            null,
             null
         );
     }

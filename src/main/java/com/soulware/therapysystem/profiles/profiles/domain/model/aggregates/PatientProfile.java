@@ -87,6 +87,13 @@ public class PatientProfile {
     @Column(name = "referred_therapist_name")
     private String referredTherapistName;
 
+    // Relationship IDs (optional)
+    @Column(name = "legal_responsible_id")
+    private Integer legalResponsibleId;
+    
+    @Column(name = "therapist_id") 
+    private Integer therapistId;
+
     // JPA default constructor
     protected PatientProfile() {}
 
@@ -99,7 +106,9 @@ public class PatientProfile {
                          Address address, 
                          Religion religion, 
                          EducationData educationData,
-                         ReferredTherapist referredTherapist) {
+                         ReferredTherapist referredTherapist,
+                         Integer legalResponsibleId,
+                         Integer therapistId) {
         if (identity == null) {
             throw new IllegalArgumentException("Identity cannot be null");
         }
@@ -152,6 +161,10 @@ public class PatientProfile {
         
         // Referred therapist assignment (optional)
         this.referredTherapistName = referredTherapist != null ? referredTherapist.therapistName() : null;
+        
+        // Relationship IDs assignment (optional)
+        this.legalResponsibleId = legalResponsibleId;
+        this.therapistId = therapistId;
     }
 
     // Método de negocio: actualizar edad actual
@@ -202,6 +215,26 @@ public class PatientProfile {
 
     public void updateReferredTherapist(ReferredTherapist referredTherapist) {
         this.referredTherapistName = referredTherapist != null ? referredTherapist.therapistName() : null;
+    }
+
+    // Método de negocio: asignar responsable legal
+    public void assignLegalResponsible(Integer legalResponsibleId) {
+        this.legalResponsibleId = legalResponsibleId;
+    }
+
+    // Método de negocio: remover responsable legal
+    public void removeLegalResponsible() {
+        this.legalResponsibleId = null;
+    }
+
+    // Método de negocio: asignar terapeuta
+    public void assignTherapist(Integer therapistId) {
+        this.therapistId = therapistId;
+    }
+
+    // Método de negocio: remover terapeuta
+    public void removeTherapist() {
+        this.therapistId = null;
     }
 
     // Getters - Return value objects constructed from JPA fields
@@ -261,6 +294,14 @@ public class PatientProfile {
 
     public ReferredTherapist getReferredTherapist() {
         return this.referredTherapistName != null ? new ReferredTherapist(this.referredTherapistName) : null;
+    }
+
+    public Integer getLegalResponsibleId() {
+        return this.legalResponsibleId;
+    }
+
+    public Integer getTherapistId() {
+        return this.therapistId;
     }
 
     @Override

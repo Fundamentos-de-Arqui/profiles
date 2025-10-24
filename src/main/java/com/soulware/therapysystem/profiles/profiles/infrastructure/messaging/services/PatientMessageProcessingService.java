@@ -110,7 +110,9 @@ public class PatientMessageProcessingService {
             data.educationLevel() != null ? data.educationLevel() : "No especificado",
             data.occupation() != null ? data.occupation() : "No especificado",
             data.currentEducationalInstitution() != null ? data.currentEducationalInstitution() : "No especificado",
-            data.referredTherapistName()
+            data.referredTherapistName(),
+            null, // legalResponsibleId - not provided in message
+            null  // therapistId - not provided in message
         );
     }
     

@@ -31,7 +31,9 @@ public class PatientProfileResourceFromEntityAssembler {
                 entity.getEducationData().educationLevel(),
                 entity.getEducationData().occupation(),
                 entity.getEducationData().currentEducationalInstitution(),
-                referredTherapist != null ? referredTherapist.therapistName() : null
+                referredTherapist != null ? referredTherapist.therapistName() : null,
+                entity.getLegalResponsibleId(),
+                entity.getTherapistId()
         );
     }
 }

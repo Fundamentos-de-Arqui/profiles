@@ -24,4 +24,18 @@ public interface PatientProfileCommandService {
      * @return True if deleted successfully, false otherwise.
      */
     boolean handle(DeletePatientProfileCommand command);
+
+    /**
+     * Handle assigning a legal responsible to a patient profile.
+     * @param command The command containing patient and legal responsible IDs.
+     * @return Optional patient profile if updated successfully.
+     */
+    Optional<PatientProfile> handle(AssignLegalResponsibleCommand command);
+
+    /**
+     * Handle assigning a therapist to a patient profile.
+     * @param command The command containing patient and therapist IDs.
+     * @return Optional patient profile if updated successfully.
+     */
+    Optional<PatientProfile> handle(AssignTherapistCommand command);
 }
