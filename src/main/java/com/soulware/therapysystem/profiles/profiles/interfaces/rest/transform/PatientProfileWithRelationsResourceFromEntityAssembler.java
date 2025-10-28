@@ -1,6 +1,6 @@
 package com.soulware.therapysystem.profiles.profiles.interfaces.rest.transform;
 
-import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileWithRelations;
+import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.PatientProfileWithRelations;
 import com.soulware.therapysystem.profiles.profiles.interfaces.rest.resources.PatientProfileWithRelationsResource;
 
 public class PatientProfileWithRelationsResourceFromEntityAssembler {

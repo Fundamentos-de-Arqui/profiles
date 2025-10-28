@@ -1,7 +1,7 @@
 package com.soulware.therapysystem.profiles.profiles.domain.services;
 
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile;
-import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileWithRelations;
+import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.PatientProfileWithRelations;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.*;
 import java.util.List;
 import java.util.Optional;

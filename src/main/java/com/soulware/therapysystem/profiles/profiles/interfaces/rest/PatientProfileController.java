@@ -1,7 +1,7 @@
 package com.soulware.therapysystem.profiles.profiles.interfaces.rest;
 
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile;
-import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileWithRelations;
+import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.PatientProfileWithRelations;
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.CreatePatientProfileCommand;
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.DeletePatientProfileCommand;
 import com.soulware.therapysystem.profiles.profiles.domain.model.commands.AssignLegalResponsibleCommand;

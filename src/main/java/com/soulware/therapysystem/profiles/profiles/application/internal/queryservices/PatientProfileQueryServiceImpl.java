@@ -1,7 +1,7 @@
 package com.soulware.therapysystem.profiles.profiles.application.internal.queryservices;
 
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile;
-import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileWithRelations;
+import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.PatientProfileWithRelations;
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.LegalResponsibleProfile;
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.TherapistProfile;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.*;

@@ -15,7 +15,7 @@ import java.util.logging.Level;
 
 import com.soulware.therapysystem.profiles.profiles.domain.services.PatientProfileQueryService;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.GetPatientProfileWithRelationsByDocumentQuery;
-import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileWithRelations;
+import com.soulware.therapysystem.profiles.profiles.domain.model.valueobjects.PatientProfileWithRelations;
 import com.soulware.therapysystem.profiles.profiles.interfaces.rest.resources.PatientProfileWithRelationsResource;
 import com.soulware.therapysystem.profiles.profiles.interfaces.rest.transform.PatientProfileWithRelationsResourceFromEntityAssembler;
 
