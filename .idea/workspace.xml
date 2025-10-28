@@ -10,12 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfa63adb-deec-4262-95f5-a37b69a60753" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/soulware/therapysystem/profiles/profiles/application/internal/queryservices/LegalResponsibleProfileQueryServiceImplTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/soulware/therapysystem/profiles/profiles/application/internal/queryservices/PatientProfileQueryServiceImplTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/soulware/therapysystem/profiles/profiles/application/internal/commandservices/PatientProfileCommandServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/soulware/therapysystem/profiles/profiles/application/internal/commandservices/PatientProfileCommandServiceImplTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/soulware/therapysystem/profiles/profiles/domain/model/aggregates/PatientProfileTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/soulware/therapysystem/profiles/profiles/domain/model/aggregates/PatientProfileTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +53,7 @@
     "JUnit.LegalResponsibleProfileCommandServiceIntegrationTest.executor": "Run",
     "JUnit.LegalResponsibleProfileQueryServiceIntegrationTest.executor": "Run",
     "JUnit.PatientProfileCommandServiceIntegrationTest.executor": "Run",
+    "JUnit.PatientProfileQueryServiceIntegrationTest.executor": "Run",
     "JUnit.PatientProfileTest.executor": "Run",
     "JUnit.TherapistProfileCommandServiceIntegrationTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
@@ -73,7 +70,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="JUnit.LegalResponsibleProfileQueryServiceIntegrationTest">
+  <component name="RunManager" selected="JUnit.PatientProfileQueryServiceIntegrationTest">
     <configuration default="true" type="AZURE_FUNCTION_SUPPORT" factoryName="Run Functions">
       <option name="appName" />
       <option name="appServicePlanName" />
@@ -186,16 +183,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="PatientProfileTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PatientProfileQueryServiceIntegrationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Profiles" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.*" />
+          <option name="PATTERN" value="com.soulware.therapysystem.profiles.profiles.application.internal.queryservices.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.soulware.therapysystem.profiles.profiles.domain.model.aggregates" />
-      <option name="MAIN_CLASS_NAME" value="com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileTest" />
+      <option name="PACKAGE_NAME" value="com.soulware.therapysystem.profiles.profiles.application.internal.queryservices" />
+      <option name="MAIN_CLASS_NAME" value="com.soulware.therapysystem.profiles.profiles.application.internal.queryservices.PatientProfileQueryServiceIntegrationTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -220,17 +217,17 @@
       <item itemvalue="JBoss/WildFly Server.JBoss/WildFly 36.0.0.Final" />
       <item itemvalue="JUnit.LegalResponsibleProfileCommandServiceIntegrationTest" />
       <item itemvalue="JUnit.LegalResponsibleProfileQueryServiceIntegrationTest" />
+      <item itemvalue="JUnit.PatientProfileQueryServiceIntegrationTest" />
       <item itemvalue="JUnit.TherapistProfileCommandServiceIntegrationTest" />
       <item itemvalue="JUnit.PatientProfileCommandServiceIntegrationTest" />
-      <item itemvalue="JUnit.PatientProfileTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.PatientProfileQueryServiceIntegrationTest" />
         <item itemvalue="JUnit.LegalResponsibleProfileQueryServiceIntegrationTest" />
         <item itemvalue="JUnit.TherapistProfileCommandServiceIntegrationTest" />
         <item itemvalue="JUnit.LegalResponsibleProfileCommandServiceIntegrationTest" />
         <item itemvalue="JUnit.PatientProfileCommandServiceIntegrationTest" />
-        <item itemvalue="JUnit.PatientProfileTest" />
       </list>
     </recent_temporary>
   </component>
@@ -252,7 +249,7 @@
       <workItem from="1759349637939" duration="3082000" />
       <workItem from="1759361315902" duration="850000" />
       <workItem from="1759362375742" duration="2088000" />
-      <workItem from="1761666561708" duration="2651000" />
+      <workItem from="1761666561708" duration="3466000" />
     </task>
     <servers />
   </component>
