@@ -29,9 +29,12 @@ class PatientProfileTest {
         Address address = new Address("Av. Los Olivos 123", "Los Olivos", "Lima", "Lima", "Perú");
         Religion religion = new Religion("Católica");
         EducationData educationData = new EducationData("Universitario", "Ingeniero", "PUCP");
+        ReferredTherapist  referredTherapist = new ReferredTherapist("Jesús");
+        Integer legalResponsibleId = 1;
+        Integer therapistId = 1;
 
         // Act: crear el paciente
-        PatientProfile patient = new PatientProfile(identity, birthData, age, gender, maritalStatus, address, religion, educationData);
+        PatientProfile patient = new PatientProfile(identity, birthData, age, gender, maritalStatus, address, religion, educationData,  referredTherapist, legalResponsibleId, therapistId);
 
         // Assert: verificar que los datos se asignaron correctamente
         assertThat(patient.getIdentity().firstNames().value()).isEqualTo("Juan");

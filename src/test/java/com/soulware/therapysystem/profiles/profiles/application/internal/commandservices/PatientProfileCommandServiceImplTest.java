@@ -59,17 +59,20 @@ class PatientProfileCommandServiceIntegrationTest {
                 "1990-05-10",
                 25,
                 35,
+                "Masculino",
+                "Soltero",
                 "Av. Los Olivos 123",
                 "Los Olivos",
                 "Lima",
                 "Lima",
                 "Perú",
-                "Masculino",
-                "Soltero",
                 "Católica",
                 "Universitario",
                 "Ingeniero",
-                "PUCP"
+                "PUCP",
+                "Jesús",
+                1,
+                1
         );
 
         em.getTransaction().begin();
