@@ -1,6 +1,7 @@
 package com.soulware.therapysystem.profiles.profiles.domain.services;
 
 import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile;
+import com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfileWithRelations;
 import com.soulware.therapysystem.profiles.profiles.domain.model.queries.*;
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +33,11 @@ public interface PatientProfileQueryService {
      * @return Optional patient profile.
      */
     Optional<PatientProfile> handle(GetPatientProfileByDocumentQuery query);
+
+    /**
+     * Handle retrieving a patient profile with related entities by document.
+     * @param query Query containing the document type and number.
+     * @return Optional patient profile with relations.
+     */
+    Optional<PatientProfileWithRelations> handle(GetPatientProfileWithRelationsByDocumentQuery query);
 }

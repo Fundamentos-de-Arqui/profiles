@@ -33,6 +33,9 @@ public record CompletePatientDataRequest(
     String region,
     String country,
     
+    // Referred therapist information
+    String referredTherapistName,
+    
     // Medical information
     String medicalDiagnosis,
     String problemIdentified,

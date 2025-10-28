@@ -83,6 +83,17 @@ public class PatientProfile {
     @Column(name = "current_educational_institution")
     private String currentEducationalInstitution;
 
+    // Referred therapist field
+    @Column(name = "referred_therapist_name")
+    private String referredTherapistName;
+
+    // Relationship IDs (optional)
+    @Column(name = "legal_responsible_id")
+    private Integer legalResponsibleId;
+    
+    @Column(name = "therapist_id") 
+    private Integer therapistId;
+
     // JPA default constructor
     protected PatientProfile() {}
 
@@ -94,7 +105,10 @@ public class PatientProfile {
                          MaritalStatus maritalStatus, 
                          Address address, 
                          Religion religion, 
-                         EducationData educationData) {
+                         EducationData educationData,
+                         ReferredTherapist referredTherapist,
+                         Integer legalResponsibleId,
+                         Integer therapistId) {
         if (identity == null) {
             throw new IllegalArgumentException("Identity cannot be null");
         }
@@ -119,6 +133,7 @@ public class PatientProfile {
         if (educationData == null) {
             throw new IllegalArgumentException("Education data cannot be null");
         }
+        // ReferredTherapist puede ser null (opcional)
 
         this.id = null; // Será generado por la base de datos
         this.firstNames = identity.firstNames().value();
@@ -143,6 +158,13 @@ public class PatientProfile {
         this.educationLevel = educationData.educationLevel();
         this.occupation = educationData.occupation();
         this.currentEducationalInstitution = educationData.currentEducationalInstitution();
+        
+        // Referred therapist assignment (optional)
+        this.referredTherapistName = referredTherapist != null ? referredTherapist.therapistName() : null;
+        
+        // Relationship IDs assignment (optional)
+        this.legalResponsibleId = legalResponsibleId;
+        this.therapistId = therapistId;
     }
 
     // Método de negocio: actualizar edad actual
@@ -189,6 +211,30 @@ public class PatientProfile {
         this.educationLevel = newEducationData.educationLevel();
         this.occupation = newEducationData.occupation();
         this.currentEducationalInstitution = newEducationData.currentEducationalInstitution();
+    }
+
+    public void updateReferredTherapist(ReferredTherapist referredTherapist) {
+        this.referredTherapistName = referredTherapist != null ? referredTherapist.therapistName() : null;
+    }
+
+    // Método de negocio: asignar responsable legal
+    public void assignLegalResponsible(Integer legalResponsibleId) {
+        this.legalResponsibleId = legalResponsibleId;
+    }
+
+    // Método de negocio: remover responsable legal
+    public void removeLegalResponsible() {
+        this.legalResponsibleId = null;
+    }
+
+    // Método de negocio: asignar terapeuta
+    public void assignTherapist(Integer therapistId) {
+        this.therapistId = therapistId;
+    }
+
+    // Método de negocio: remover terapeuta
+    public void removeTherapist() {
+        this.therapistId = null;
     }
 
     // Getters - Return value objects constructed from JPA fields
@@ -244,6 +290,18 @@ public class PatientProfile {
             this.occupation,
             this.currentEducationalInstitution
         );
+    }
+
+    public ReferredTherapist getReferredTherapist() {
+        return this.referredTherapistName != null ? new ReferredTherapist(this.referredTherapistName) : null;
+    }
+
+    public Integer getLegalResponsibleId() {
+        return this.legalResponsibleId;
+    }
+
+    public Integer getTherapistId() {
+        return this.therapistId;
     }
 
     @Override

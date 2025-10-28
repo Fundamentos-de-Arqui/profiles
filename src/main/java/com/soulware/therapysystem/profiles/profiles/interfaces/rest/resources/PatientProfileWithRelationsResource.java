@@ -1,6 +1,7 @@
 package com.soulware.therapysystem.profiles.profiles.interfaces.rest.resources;
 
-public record PatientProfileResource(
+public record PatientProfileWithRelationsResource(
+        // Patient basic info
         Integer id,
         String firstNames,
         String paternalSurname,
@@ -25,6 +26,8 @@ public record PatientProfileResource(
         String occupation,
         String currentEducationalInstitution,
         String referredTherapistName,
-        Integer legalResponsibleId,
-        Integer therapistId
+        
+        // Related entities full info
+        LegalResponsibleProfileResource legalResponsible,
+        TherapistProfileResource therapist
 ) {}
