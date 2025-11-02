@@ -106,19 +106,20 @@ public class AppointmentDataActiveMQListener implements ServletContextListener, 
             }
 
             Jsonb jsonb = JsonbBuilder.create();
-            AppointmentRequest[] appointmentArray = jsonb.fromJson(messageText, AppointmentRequest[].class);
-            List<AppointmentRequest> appointments = List.of(appointmentArray);
+            AppointmentRequestWrapper requestWrapper = jsonb.fromJson(messageText, AppointmentRequestWrapper.class);
             
-            if (appointments == null || appointments.isEmpty()) {
-                logger.warning("Invalid or empty appointment list: " + messageText);
+            if (requestWrapper == null || requestWrapper.folders == null || requestWrapper.folders.isEmpty()) {
+                logger.warning("Invalid or empty appointment wrapper: " + messageText);
                 return;
             }
+            
+            List<AppointmentRequest> appointments = requestWrapper.folders;
 
             // Obtener servicios
             PatientProfileQueryService patientQueryService = CDI.current().select(PatientProfileQueryService.class).get();
             LegalResponsibleProfileQueryService legalQueryService = CDI.current().select(LegalResponsibleProfileQueryService.class).get();
 
-            List<PatientAppointmentData> responseData = new ArrayList<>();
+            List<PatientSummaryDto> responseData = new ArrayList<>();
 
             // Procesar cada cita
             for (AppointmentRequest appointment : appointments) {
@@ -153,12 +154,13 @@ public class AppointmentDataActiveMQListener implements ServletContextListener, 
                 }
 
                 // Crear respuesta
-                PatientAppointmentData patientData = new PatientAppointmentData(
+                PatientSummaryDto patientData = new PatientSummaryDto(
+                    patient.getId().value(),
+                    "ACTIVE", // Por defecto ACTIVE, podrías obtenerlo de algún campo del paciente si existe
                     patient.getIdentity().firstNames().value() + " " + 
                     patient.getIdentity().paternalSurname().value() + 
                     (patient.getIdentity().maternalSurname() != null ? 
                      " " + patient.getIdentity().maternalSurname().value() : ""),
-                    patient.getId().value(),
                     patient.getIdentity().documentType().value(),
                     patient.getIdentity().identityDocumentNumber().value(),
                     legalResponsibleName,
@@ -169,8 +171,14 @@ public class AppointmentDataActiveMQListener implements ServletContextListener, 
                 responseData.add(patientData);
             }
 
-            // Enviar respuesta
-            String responseJson = jsonb.toJson(responseData);
+            // Enviar respuesta con wrapper usando la información de paginación del request
+            PatientsSummaryWrapperDto wrapper = new PatientsSummaryWrapperDto(
+                responseData.size(),
+                requestWrapper.currentPage != null ? requestWrapper.currentPage + 1 : 1, // currentPage (base 1)
+                requestWrapper.totalPages != null ? requestWrapper.totalPages : 1, // maxPage
+                responseData
+            );
+            String responseJson = jsonb.toJson(wrapper);
             TextMessage responseMessage = session.createTextMessage(responseJson);
             producer.send(responseMessage);
             logger.info("Sent patient appointment data to apigateway_patientData for " + responseData.size() + " patients");
@@ -180,33 +188,59 @@ public class AppointmentDataActiveMQListener implements ServletContextListener, 
         }
     }
 
+    // DTO para deserializar el wrapper de citas recibidas
+    public static class AppointmentRequestWrapper {
+        public List<AppointmentRequest> folders;
+        public Integer totalPages;
+        public Integer totalElements;
+        public Integer currentPage;
+        public Integer pageSize;
+    }
+
     // DTO para deserializar las citas recibidas
     public static class AppointmentRequest {
         public Integer id;
+        public String status;
         public Integer patientId;
         public String scheduledAt;
-        public String status;
     }
 
-    // DTO para la respuesta con datos del paciente
-    public static class PatientAppointmentData {
-        public String name;
+    // DTO para la respuesta con datos del paciente (PatientSummaryDto)
+    public static class PatientSummaryDto {
         public Integer id;
+        public String status;
+        public String name;
         public String documentType;
         public String documentNumber;
         public String legalResponsible;
         public String legalResponsiblePhone;
         public String scheduledAt;
 
-        public PatientAppointmentData(String name, Integer id, String documentType, String documentNumber, 
-                                    String legalResponsible, String legalResponsiblePhone, String scheduledAt) {
-            this.name = name;
+        public PatientSummaryDto(Integer id, String status, String name, String documentType, String documentNumber, 
+                               String legalResponsible, String legalResponsiblePhone, String scheduledAt) {
             this.id = id;
+            this.status = status;
+            this.name = name;
             this.documentType = documentType;
             this.documentNumber = documentNumber;
             this.legalResponsible = legalResponsible;
             this.legalResponsiblePhone = legalResponsiblePhone;
             this.scheduledAt = scheduledAt;
+        }
+    }
+
+    // DTO wrapper para la respuesta con paginación (PatientsSummaryWrapperDto)
+    public static class PatientsSummaryWrapperDto {
+        public Integer totalResults;
+        public Integer currentPage;
+        public Integer maxPage;
+        public List<PatientSummaryDto> patients;
+
+        public PatientsSummaryWrapperDto(Integer totalResults, Integer currentPage, Integer maxPage, List<PatientSummaryDto> patients) {
+            this.totalResults = totalResults;
+            this.currentPage = currentPage;
+            this.maxPage = maxPage;
+            this.patients = patients;
         }
     }
 }
