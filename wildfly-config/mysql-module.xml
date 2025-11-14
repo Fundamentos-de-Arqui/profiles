@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Archivo de módulo para MySQL Connector en WildFly
+  Ubicación: $WILDFLY_HOME/modules/system/layers/base/com/mysql/main/module.xml
+-->
+<module xmlns="urn:jboss:module:1.3" name="com.mysql">
+    <resources>
+        <resource-root path="mysql-connector-j-9.4.0.jar"/>
+    </resources>
+    <dependencies>
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
+    </dependencies>
+</module>

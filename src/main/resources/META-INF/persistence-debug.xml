@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  Persistence.xml alternativo para debugging
+  Si el principal no funciona, renombrar este archivo como persistence.xml
+-->
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
@@ -8,8 +12,17 @@
     <persistence-unit name="profilesPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
-        <!-- JTA Data Source - Using MySQL MySqlDS -->
+        <!-- Probar diferentes formatos de JNDI -->
+        <!-- Opción 1: Formato corto -->
         <jta-data-source>java:/MySqlDS</jta-data-source>
+        
+        <!-- Opción 2: Si la opción 1 no funciona, comentar arriba y usar:
+        <jta-data-source>java:jboss/datasources/MySqlDS</jta-data-source>
+        -->
+        
+        <!-- Opción 3: Si ninguna funciona, usar ExampleDS temporalmente:
+        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+        -->
         
         <!-- Managed Entity Classes -->
         <class>com.soulware.therapysystem.profiles.profiles.domain.model.aggregates.PatientProfile</class>
@@ -23,17 +36,17 @@
             <!-- Database Configuration -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             
-            <!-- Schema generation - DEVELOPMENT: Use 'create' for first deployment, 'update' for subsequent -->
+            <!-- JTA Platform specific to WildFly -->
+            <property name="hibernate.transaction.jta.platform" value="org.hibernate.engine.transaction.jta.platform.internal.JBossAppServerJtaPlatform"/>
+            
+            <!-- Schema generation -->
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             
-            <!-- JTA and Transaction settings -->
-            <property name="hibernate.transaction.jta.platform" value="org.hibernate.engine.transaction.jta.platform.internal.JBossAppServerJtaPlatform"/>
+            <!-- Connection and JTA settings -->
+            <property name="hibernate.connection.provider_disables_autocommit" value="true"/>
             <property name="hibernate.jta.UserTransaction" value="java:jboss/UserTransaction"/>
-            
-            <!-- Connection pool settings -->
-            <property name="hibernate.connection.pool_size" value="10"/>
             
             <!-- Enable lazy loading outside of transactions -->
             <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
@@ -46,6 +59,10 @@
             
             <!-- Statistics -->
             <property name="hibernate.generate_statistics" value="false"/>
+            
+            <!-- Additional WildFly specific settings -->
+            <property name="wildfly.jpa.regionfactory" value="org.hibernate.cache.internal.NoCachingRegionFactory"/>
+            <property name="hibernate.jta.allowTransactionAccess" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

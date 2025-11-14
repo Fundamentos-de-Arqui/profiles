@@ -7,7 +7,7 @@ Bounded Context para la gestión de perfiles de pacientes, responsables legales 
 - **Java 17**
 - **Jakarta EE 11** (CDI, JAX-RS, JPA, JSON-B, Servlet API)
 - **WildFly 36** (Application Server)
-- **H2 Database** (Base de datos en memoria)
+- **MySQL 8.0** (Base de datos)
 - **ActiveMQ 5.18.3** (Message Broker)
 - **Maven** (Build tool)
 
@@ -248,46 +248,289 @@ Optional<PatientProfile> patient = profilesContext.fetchPatientProfileById(123);
 Optional<PatientProfile> patient = profilesContext.fetchPatientProfileByDocument("DNI", "12345678");
 ```
 
-## Mensajería JMS
+## Mensajería JMS - Listeners ActiveMQ
 
-El contexto consume mensajes del CustomerService a través de ActiveMQ para crear automáticamente perfiles de pacientes.
+El contexto implementa un sistema completo de mensajería JMS con **4 listeners especializados** que procesan diferentes tipos de solicitudes de otros microservicios.
 
-### Queue consumida:
-- **Queue**: `patient.processing.queue`
-- **Listener**: `ServletActiveMQListener`
-- **Procesamiento**: Automático al recibir mensajes JSON
+### 🔧 Configuración ActiveMQ
+- **Broker URL**: `tcp://localhost:61616`
+- **Auto-acknowledge**: Habilitado
+- **Formatos soportados**: `TextMessage` y `BytesMessage`
+- **Serialización**: Jakarta JSON-B
 
-### Estructura del mensaje esperado:
+---
+
+### 📋 1. ExcelDataActiveMQListener
+
+**Propósito**: Procesa solicitudes de datos de pacientes para generación de formularios Excel.
+
+**Queue de entrada**: `profiles_getExcelData`  
+**Queue de salida**: `excelParser_patientForm`
+
+#### Formato de entrada:
 ```json
 {
-  "messageId": "uuid",
-  "fileName": "archivo-excel",
-  "uploadedAt": "2025-10-05T01:26:38.0847096",
-  "patientData": {
-    "firstNames": "Test Patient",
-    "paternalSurname": "Apellido",
-    "maternalSurname": "Materno",
-    "documentType": "DNI",
+    "type": "DNI",
     "documentNumber": "12345678",
-    "phone": "987654321",
-    "email": "test@email.com",
-    "birthDate": "1990-01-15",
-    "birthPlace": null,
-    // ... otros campos opcionales
-    "legalResponsibles": [],
-    "therapists": null
-  },
-  "retryCount": 0,
-  "status": "PENDING"
+    "timestamp": "2025-11-02T10:15:30Z"
 }
 ```
 
-### Comportamiento del listener:
-- ✅ Consume mensajes automáticamente
-- ✅ Parsea JSON con Jakarta JSON-B
-- ✅ Maneja valores null con valores por defecto
-- ✅ Crea perfiles de paciente en la base de datos
-- ✅ Registra logs detallados del procesamiento
+#### Formato de salida:
+```json
+{
+    "id": 1,
+    "firstNames": "Juan Carlos",
+    "paternalSurname": "Pérez",
+    "maternalSurname": "García",
+    "documentType": "DNI",
+    "identityDocumentNumber": "12345678",
+    "email": "juan.perez@email.com",
+    "phone": "987654321",
+    "birthDate": "1990-05-15",
+    "birthPlace": "Lima, Perú",
+    "currentAge": 33,
+    "firstAppointmentAge": 25,
+    "gender": "MASCULINO",
+    "maritalStatus": "SOLTERO",
+    "currentAddress": "Av. Principal 123",
+    "district": "Miraflores",
+    "province": "Lima",
+    "region": "Lima",
+    "country": "Perú",
+    "religion": "CATOLICO",
+    "educationLevel": "Universitario",
+    "occupation": "Ingeniero",
+    "currentEducationalInstitution": "Universidad Nacional",
+    "legalResponsible": {
+        "id": 1,
+        "firstNames": "María Elena",
+        "paternalSurname": "González",
+        "maternalSurname": "López",
+        "documentType": "DNI",
+        "identityDocumentNumber": "87654321",
+        "email": "maria.gonzalez@email.com",
+        "phone": "912345678",
+        "relationship": "Madre"
+    },
+    "therapist": {
+        "id": 1,
+        "firstNames": "Ana Sofía",
+        "paternalSurname": "Rodríguez",
+        "maternalSurname": "Martínez",
+        "documentType": "DNI",
+        "identityDocumentNumber": "11223344",
+        "email": "ana.rodriguez@email.com",
+        "phone": "956789123",
+        "specialtyName": "Psicología Clínica",
+        "attentionPlaceAddress": "Consultorio Médico, Av. Salud 456"
+    }
+}
+```
+
+---
+
+### 📅 2. AppointmentDataActiveMQListener
+
+**Propósito**: Procesa listas de citas médicas y retorna datos resumidos de pacientes con información de paginación.
+
+**Queue de entrada**: `profiles_getAppointmentData`  
+**Queue de salida**: `apigateway_patientData`
+
+#### Formato de entrada:
+```json
+{
+    "folders": [
+        {
+            "id": 1,
+            "status": "ACTIVE",
+            "patientId": 1,
+            "scheduledAt": "2007-12-03T10:15:30"
+        },
+        {
+            "id": 2,
+            "status": "ACTIVE",
+            "patientId": 200,
+            "scheduledAt": null
+        }
+    ],
+    "totalPages": 1,
+    "totalElements": 2,
+    "currentPage": 0,
+    "pageSize": 2
+}
+```
+
+#### Formato de salida:
+```json
+{
+    "totalResults": 2,
+    "currentPage": 1,
+    "maxPage": 1,
+    "patients": [
+        {
+            "id": 1,
+            "status": "ACTIVE",
+            "name": "Juan Carlos Pérez García",
+            "documentType": "DNI",
+            "documentNumber": "12345678",
+            "legalResponsible": "María Elena González López",
+            "legalResponsiblePhone": "912345678",
+            "scheduledAt": "2007-12-03T10:15:30"
+        },
+        {
+            "id": 200,
+            "status": "ACTIVE",
+            "name": "Ana María López Martínez",
+            "documentType": "DNI",
+            "documentNumber": "87654321",
+            "legalResponsible": null,
+            "legalResponsiblePhone": null,
+            "scheduledAt": null
+        }
+    ]
+}
+```
+
+---
+
+### 🏥 3. MedicalRecordActiveMQListener
+
+**Propósito**: Procesa solicitudes de expedientes médicos y retorna datos completos del paciente y terapeuta asociados.
+
+**Queue de entrada**: `profiles_getMedicalRecord`  
+**Queue de salida**: `apigateway_filiationFiles`
+
+#### Formato de entrada:
+```json
+{
+    "id": 1,
+    "versionNumber": 1,
+    "diagnostic": "Ansiedad generalizada",
+    "treatment": "Terapia cognitivo-conductual",
+    "description": "Sesión inicial de evaluación",
+    "patientId": 1,
+    "therapistId": 1,
+    "assessmentType": "ASSESSMENT",
+    "scheduledAt": "2007-12-03T10:15:30",
+    "createdAt": "2025-10-26T08:02:57Z"
+}
+```
+
+#### Formato de salida:
+```json
+{
+    "id": 1,
+    "scheduledAt": "2007-12-03T10:15:30",
+    "createdAt": "2025-10-26T08:02:57Z",
+    "assessmentType": "ASSESSMENT",
+    "description": "Sesión inicial de evaluación",
+    "diagnostic": "Ansiedad generalizada",
+    "treatment": "Terapia cognitivo-conductual",
+    "versionNumber": 1,
+    "patient": {
+        "birthDate": "1990-05-15",
+        "birthPlace": "Lima, Perú",
+        "country": "Perú",
+        "currentAddress": "Av. Principal 123",
+        "currentAge": 33,
+        "currentEducationalInstitution": "Universidad Nacional",
+        "district": "Miraflores",
+        "documentType": "DNI",
+        "educationLevel": "Universitario",
+        "email": "juan.perez@email.com",
+        "firstAppointmentAge": 25,
+        "firstNames": "Juan Carlos",
+        "gender": "MASCULINO",
+        "identityDocumentNumber": "12345678",
+        "maritalStatus": "SOLTERO",
+        "maternalSurname": "García",
+        "occupation": "Ingeniero",
+        "paternalSurname": "Pérez",
+        "phone": "987654321",
+        "province": "Lima",
+        "region": "Lima",
+        "religion": "CATOLICO"
+    },
+    "therapist": {
+        "attentionPlaceAddress": "Consultorio Médico, Av. Salud 456",
+        "documentType": "DNI",
+        "email": "ana.rodriguez@email.com",
+        "firstNames": "Ana Sofía",
+        "identityDocumentNumber": "11223344",
+        "maternalSurname": "Martínez",
+        "paternalSurname": "Rodríguez",
+        "phone": "956789123",
+        "specialtyName": "Psicología Clínica"
+    }
+}
+```
+
+---
+
+### 👤 4. ServletActiveMQListener (Legacy)
+
+**Propósito**: Procesa mensajes del sistema de clientes para crear automáticamente perfiles de pacientes.
+
+**Queue de entrada**: `patient.processing.queue`
+
+#### Formato de entrada:
+```json
+{
+    "messageId": "uuid",
+    "fileName": "archivo-excel",
+    "uploadedAt": "2025-10-05T01:26:38.0847096",
+    "patientData": {
+        "firstNames": "Test Patient",
+        "paternalSurname": "Apellido",
+        "maternalSurname": "Materno",
+        "documentType": "DNI",
+        "documentNumber": "12345678",
+        "phone": "987654321",
+        "email": "test@email.com",
+        "birthDate": "1990-01-15",
+        "birthPlace": null,
+        "legalResponsibles": [],
+        "therapists": null
+    },
+    "retryCount": 0,
+    "status": "PENDING"
+}
+```
+
+---
+
+### 🔄 Flujo de Procesamiento
+
+Todos los listeners siguen este patrón:
+
+1. **Recepción**: Escuchan en sus respectivas colas de entrada
+2. **Validación**: Verifican formato JSON y campos requeridos
+3. **Conversión**: Soportan `TextMessage` y `BytesMessage`
+4. **Procesamiento**: Consultan base de datos usando servicios de dominio
+5. **Respuesta**: Envían JSON estructurado a colas de salida
+6. **Logging**: Registran operaciones y errores detalladamente
+
+### 🚨 Manejo de Errores
+
+- **Datos no encontrados**: Se logea como WARNING y se omite el procesamiento
+- **JSON inválido**: Se logea como WARNING y se rechaza el mensaje
+- **Errores de conexión**: Se logea como SEVERE con stack trace
+- **Tipos de mensaje no soportados**: Se logea como WARNING
+
+### 📊 Monitoreo
+
+Los listeners generan logs detallados para:
+- ✅ Conexión exitosa a colas
+- ✅ Mensajes recibidos y procesados
+- ✅ Datos enviados a colas de salida
+- ⚠️ Errores de validación
+- ❌ Errores de procesamiento
+
+Los logs aparecen en la consola de WildFly con formato:
+```
+[LOGGER_NAME] (Thread) MESSAGE_CONTENT
+```
 
 ## Instalación y Ejecución
 
@@ -295,44 +538,115 @@ El contexto consume mensajes del CustomerService a través de ActiveMQ para crea
 - Java 17+
 - Maven 3.8+
 - WildFly 36
+- MySQL 8.0+
 - ActiveMQ 5.18.3
 
 ### Pasos:
 
-1. **Compilar el proyecto:**
+1. **Configurar MySQL:**
+   ```bash
+   # Crear base de datos y usuario
+   mysql -u root -p < database/setup-mysql.sql
+   ```
+
+2. **Configurar WildFly para MySQL:**
+   ```powershell
+   # En PowerShell (Windows)
+   .\setup-mysql.ps1 -WildFlyHome "C:\path\to\wildfly"
+   
+   # O manualmente:
+   # 1. Copiar MySQL module: wildfly-config/mysql-module.xml
+   # 2. Descargar mysql-connector-j-8.0.33.jar
+   # 3. Configurar en $WILDFLY_HOME/modules/system/layers/base/com/mysql/main/
+   ```
+
+3. **Iniciar WildFly y configurar DataSource:**
+   ```bash
+   # Iniciar WildFly
+   $WILDFLY_HOME/bin/standalone.bat
+   
+   # En otra terminal, configurar DataSource
+   $WILDFLY_HOME/bin/jboss-cli.bat --connect --file=mysql-datasource-setup.cli
+   ```
+
+4. **Compilar el proyecto:**
    ```bash
    ./mvnw clean package
    ```
 
-2. **Desplegar en WildFly:**
+5. **Desplegar en WildFly:**
    - Copiar `target/Profiles-1.0-SNAPSHOT.war` a `wildfly/standalone/deployments/`
 
 3. **Configurar ActiveMQ:**
    - Iniciar ActiveMQ en puerto `61616`
-   - Crear queue `patient.processing.queue`
+   - Crear las siguientes colas:
+     - `profiles_getExcelData` (entrada)
+     - `excelParser_patientForm` (salida)
+     - `profiles_getAppointmentData` (entrada)
+     - `apigateway_patientData` (salida)
+     - `profiles_getMedicalRecord` (entrada)
+     - `apigateway_filiationFiles` (salida)
+     - `patient.processing.queue` (entrada - legacy)
 
 4. **Verificar despliegue:**
    - API REST: `http://localhost:8080/Profiles-1.0-SNAPSHOT/api/v1/patient-profiles`
-   - Logs: WildFly console para ver procesamiento de mensajes
+   - Logs: WildFly console para ver conexión de listeners JMS
+   - ActiveMQ Web Console: `http://localhost:8161/admin` (admin/admin)
+   - MySQL: Verificar conexión del DataSource en WildFly Admin Console: `http://localhost:9990`
+   - Verificar que los 4 listeners se conecten exitosamente:
+     ```
+     SUCCESS: ExcelDataActiveMQListener connected to profiles_getExcelData
+     SUCCESS: AppointmentDataActiveMQListener connected to profiles_getAppointmentData  
+     SUCCESS: MedicalRecordActiveMQListener connected to profiles_getMedicalRecord
+     SUCCESS: ServletActiveMQListener connected to patient.processing.queue
+     ```
 
 ## Base de Datos
 
-- **Tipo**: H2 in-memory
+- **Tipo**: MySQL 8.0
+- **Base de datos**: `profiles_db`
+- **Usuario**: `profiles_user`
+- **Contraseña**: `profiles_password`
 - **Persistence Unit**: `profilesPU`
+- **DataSource**: `java:jboss/datasources/ProfilesDS`
 - **Configuración**: `META-INF/persistence.xml`
-- **Inicialización**: Automática con JPA DDL
+- **Inicialización**: Automática con JPA DDL (hibernate.hbm2ddl.auto=update)
 
 ### Tablas principales:
-- `patient_profiles`
-- `legal_responsible_profiles`
-- `therapist_profiles`
+- `patient_profiles` - Perfiles de pacientes
+- `legal_responsible_profiles` - Perfiles de responsables legales  
+- `therapist_profiles` - Perfiles de terapeutas
+
+### Configuración de conexión MySQL:
+```
+URL: jdbc:mysql://localhost:3306/profiles_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+Usuario: profiles_user
+Contraseña: profiles_password
+```
+
+### Scripts incluidos:
+- `database/setup-mysql.sql` - Inicialización de base de datos
+- `mysql-datasource-setup.cli` - Configuración WildFly DataSource
+- `setup-mysql.ps1` - Script automatizado de configuración
 
 ## Logging
 
 El sistema genera logs detallados para:
-- ✅ Procesamiento de mensajes JMS
-- ✅ Creación/consulta de perfiles
-- ✅ Errores de validación
-- ✅ Operaciones de persistencia
+- ✅ Inicialización y conexión de listeners JMS
+- ✅ Procesamiento de mensajes en 4 colas diferentes
+- ✅ Creación/consulta de perfiles (pacientes, terapeutas, responsables legales)
+- ✅ Errores de validación y datos no encontrados
+- ✅ Operaciones de persistencia JPA
+- ✅ Conversión de mensajes (TextMessage ↔ BytesMessage)
+- ✅ Envío de respuestas a colas de salida
 
-Los logs aparecen en la consola de WildFly y ayudan a monitorear el funcionamiento del sistema.
+### Ejemplos de logs importantes:
+```
+SUCCESS: ExcelDataActiveMQListener connected to profiles_getExcelData and ready to send to excelParser_patientForm
+=== MESSAGE RECEIVED BY APPOINTMENT DATA LISTENER ===
+Sent patient appointment data to apigateway_patientData for 2 patients
+Patient not found for ID: 1
+Sent medical record data to apigateway_filiationFiles for patient ID: 1 and therapist ID: 1
+```
+
+Los logs aparecen en la consola de WildFly y ayudan a monitorear el funcionamiento completo del sistema de mensajería.
