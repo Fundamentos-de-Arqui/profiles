@@ -64,9 +64,9 @@ public class ServletActiveMQListener implements ServletContextListener, MessageL
                 session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 
                 // Create queue
-                logger.info("Creating queue: patient.processing.queue");
-                System.out.println("Creating queue: patient.processing.queue");
-                Queue queue = session.createQueue("patient.processing.queue");
+                logger.info("Creating queue: patient-data-queue");
+                System.out.println("Creating queue: patient-data-queue");
+                Queue queue = session.createQueue("patient-data-queue");
                 
                 // Create consumer
                 logger.info("Creating consumer...");
@@ -81,8 +81,8 @@ public class ServletActiveMQListener implements ServletContextListener, MessageL
                 
                 isInitialized = true;
                 
-                System.out.println("SUCCESS: ServletActiveMQListener connected to patient.processing.queue");
-                logger.info("SUCCESS: ServletActiveMQListener connected to patient.processing.queue");
+                System.out.println("SUCCESS: ServletActiveMQListener connected to patient-data-queue");
+                logger.info("SUCCESS: ServletActiveMQListener connected to patient-data-queue");
                 
             } catch (Exception e) {
                 System.err.println("FAILED to initialize ServletActiveMQListener: " + e.getMessage());
