@@ -250,7 +250,7 @@ Optional<PatientProfile> patient = profilesContext.fetchPatientProfileByDocument
 
 ## Mensajería JMS - Listeners ActiveMQ
 
-El contexto implementa un sistema completo de mensajería JMS con **4 listeners especializados** que procesan diferentes tipos de solicitudes de otros microservicios.
+El contexto implementa un sistema completo de mensajería JMS con **5 listeners especializados** que procesan diferentes tipos de solicitudes de otros microservicios.
 
 ### 🔧 Configuración ActiveMQ
 - **Broker URL**: `tcp://localhost:61616`
@@ -260,7 +260,96 @@ El contexto implementa un sistema completo de mensajería JMS con **4 listeners 
 
 ---
 
-### 📋 1. ExcelDataActiveMQListener
+### 🆕 1. ProfileRegisterActiveMQListener
+
+**Propósito**: Procesa solicitudes de registro de nuevos usuarios y crea perfiles correspondientes.
+
+**Queue de entrada**: `profiles_register`  
+**Queue de salida**: `iam_register`
+
+#### Lógica de validación:
+- ✅ Verifica si ya existe un perfil con el mismo DNI y rol
+- ✅ Solo permite registro si no hay duplicados por rol específico
+- ✅ Un DNI puede existir en diferentes roles (ej: mismo DNI como paciente y como responsable legal)
+
+#### Tipos de registro soportados:
+
+**Paciente:**
+```json
+{
+  "password": "string",
+  "firstNames": "Juan Carlos",
+  "paternalSurname": "Pérez",
+  "maternalSurname": "García",
+  "identityDocumentNumber": "12345678",
+  "documentType": "DNI",
+  "phone": "+51987654321",
+  "email": "juan.perez@email.com",
+  "birthPlace": "Lima, Perú",
+  "birthDate": "1990-05-15",
+  "firstAppointmentAge": 25,
+  "currentAge": 33,
+  "gender": "MASCULINO",
+  "maritalStatus": "SOLTERO",
+  "currentAddress": "Av. Principal 123",
+  "district": "Miraflores",
+  "province": "Lima",
+  "region": "Lima",
+  "country": "Perú",
+  "religion": "CATOLICO",
+  "educationLevel": "Universitario",
+  "occupation": "Ingeniero",
+  "currentEducationalInstitution": "Universidad Nacional",
+  "referredTherapistName": "Dr. García",
+  "legalResponsibleId": "1",
+  "therapistId": "2"
+}
+```
+
+**Terapeuta:**
+```json
+{
+  "password": "string",
+  "firstNames": "Ana",
+  "paternalSurname": "Torres",
+  "maternalSurname": "Lopez",
+  "identityDocumentNumber": "11223344",
+  "documentType": "DNI",
+  "phone": "977665544",
+  "email": "ana.torres@example.com",
+  "specialtyName": "Psicología",
+  "attentionPlaceAddress": "Av. Salud 456"
+}
+```
+
+**Responsable Legal:**
+```json
+{
+  "password": "string",
+  "documentType": "DNI",
+  "email": "carmen.perez@gmail.com",
+  "firstNames": "Carmen Rosa",
+  "identityDocumentNumber": "18456723",
+  "maternalSurname": "González",
+  "paternalSurname": "Pérez",
+  "phone": "+51987123456",
+  "relationship": "Madre"
+}
+```
+
+#### Formato de salida (hacia IAM):
+```json
+{
+  "accountType": "PATIENT" | "LEGAL_RESPONSIBLE" | "THERAPIST",
+  "password": "string",
+  "documentType": "DNI",
+  "identityDocumentNumber": "12345678"
+}
+```
+
+---
+
+### 📋 2. ExcelDataActiveMQListener
 
 **Propósito**: Procesa solicitudes de datos de pacientes para generación de formularios Excel.
 
@@ -330,7 +419,7 @@ El contexto implementa un sistema completo de mensajería JMS con **4 listeners 
 
 ---
 
-### 📅 2. AppointmentDataActiveMQListener
+### 📅 3. AppointmentDataActiveMQListener
 
 **Propósito**: Procesa listas de citas médicas y retorna datos resumidos de pacientes con información de paginación.
 
@@ -394,7 +483,7 @@ El contexto implementa un sistema completo de mensajería JMS con **4 listeners 
 
 ---
 
-### 🏥 3. MedicalRecordActiveMQListener
+### 🏥 4. MedicalRecordActiveMQListener
 
 **Propósito**: Procesa solicitudes de expedientes médicos y retorna datos completos del paciente y terapeuta asociados.
 
@@ -468,7 +557,7 @@ El contexto implementa un sistema completo de mensajería JMS con **4 listeners 
 
 ---
 
-### 👤 4. ServletActiveMQListener (Legacy)
+### 👤 5. ServletActiveMQListener (Legacy)
 
 **Propósito**: Procesa mensajes del sistema de clientes para crear automáticamente perfiles de pacientes.
 
@@ -580,6 +669,8 @@ Los logs aparecen en la consola de WildFly con formato:
 3. **Configurar ActiveMQ:**
    - Iniciar ActiveMQ en puerto `61616`
    - Crear las siguientes colas:
+     - `profiles_register` (entrada)
+     - `iam_register` (salida) 
      - `profiles_getExcelData` (entrada)
      - `excelParser_patientForm` (salida)
      - `profiles_getAppointmentData` (entrada)
@@ -593,8 +684,9 @@ Los logs aparecen en la consola de WildFly con formato:
    - Logs: WildFly console para ver conexión de listeners JMS
    - ActiveMQ Web Console: `http://localhost:8161/admin` (admin/admin)
    - MySQL: Verificar conexión del DataSource en WildFly Admin Console: `http://localhost:9990`
-   - Verificar que los 4 listeners se conecten exitosamente:
+   - Verificar que los 5 listeners se conecten exitosamente:
      ```
+     SUCCESS: ProfileRegisterActiveMQListener connected to profiles_register
      SUCCESS: ExcelDataActiveMQListener connected to profiles_getExcelData
      SUCCESS: AppointmentDataActiveMQListener connected to profiles_getAppointmentData  
      SUCCESS: MedicalRecordActiveMQListener connected to profiles_getMedicalRecord
@@ -633,7 +725,8 @@ Contraseña: profiles_password
 
 El sistema genera logs detallados para:
 - ✅ Inicialización y conexión de listeners JMS
-- ✅ Procesamiento de mensajes en 4 colas diferentes
+- ✅ Procesamiento de mensajes en 5 colas diferentes  
+- ✅ Validación de registros por DNI y rol
 - ✅ Creación/consulta de perfiles (pacientes, terapeutas, responsables legales)
 - ✅ Errores de validación y datos no encontrados
 - ✅ Operaciones de persistencia JPA
@@ -642,6 +735,11 @@ El sistema genera logs detallados para:
 
 ### Ejemplos de logs importantes:
 ```
+SUCCESS: ProfileRegisterActiveMQListener connected to profiles_register and ready to send to iam_register
+Processing patient registration for DNI: 12345678
+Patient with DNI 12345678 already exists. Registration aborted.
+Patient registration completed for DNI: 87654321
+Sent registration message to IAM: {"accountType":"PATIENT",...}
 SUCCESS: ExcelDataActiveMQListener connected to profiles_getExcelData and ready to send to excelParser_patientForm
 === MESSAGE RECEIVED BY APPOINTMENT DATA LISTENER ===
 Sent patient appointment data to apigateway_patientData for 2 patients
