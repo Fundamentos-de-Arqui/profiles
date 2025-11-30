@@ -250,7 +250,7 @@ Optional<PatientProfile> patient = profilesContext.fetchPatientProfileByDocument
 
 ## Mensajería JMS - Listeners ActiveMQ
 
-El contexto implementa un sistema completo de mensajería JMS con **5 listeners especializados** que procesan diferentes tipos de solicitudes de otros microservicios.
+El contexto implementa un sistema completo de mensajería JMS con **7 listeners especializados** que procesan diferentes tipos de solicitudes de otros microservicios.
 
 ### 🔧 Configuración ActiveMQ
 - **Broker URL**: `tcp://localhost:61616`
@@ -557,7 +557,97 @@ El contexto implementa un sistema completo de mensajería JMS con **5 listeners 
 
 ---
 
-### 👤 5. ServletActiveMQListener (Legacy)
+### 📋 5. TherapistProfilesActiveMQListener
+
+**Propósito**: Retorna la lista completa de perfiles de terapeutas registrados en el sistema.
+
+**Queue de entrada**: `profiles_therapistProfiles`  
+**Queue de salida**: `apigateway_therapistProfiles`
+
+#### Formato de entrada:
+```json
+{
+    "request": "getAllTherapists"
+}
+```
+
+#### Formato de salida:
+```json
+[
+    {
+        "id": 1,
+        "firstNames": "Ana Sofía",
+        "paternalSurname": "Rodríguez",
+        "maternalSurname": "Martínez",
+        "identityDocumentNumber": "11223344",
+        "documentType": "DNI",
+        "phone": "956789123",
+        "email": "ana.rodriguez@email.com",
+        "specialtyName": "Psicología Clínica",
+        "attentionPlaceAddress": "Consultorio Médico, Av. Salud 456"
+    },
+    {
+        "id": 2,
+        "firstNames": "Carlos Eduardo",
+        "paternalSurname": "López",
+        "maternalSurname": "García",
+        "identityDocumentNumber": "55667788",
+        "documentType": "DNI",
+        "phone": "923456789",
+        "email": "carlos.lopez@email.com",
+        "specialtyName": "Terapia Familiar",
+        "attentionPlaceAddress": "Centro de Salud Mental, Calle Bienestar 789"
+    }
+]
+```
+
+---
+
+### 👨‍👩‍👧‍👦 6. LegalResponsibleProfilesActiveMQListener
+
+**Propósito**: Retorna la lista completa de perfiles de responsables legales registrados en el sistema.
+
+**Queue de entrada**: `profiles_legal-responsibleProfiles`  
+**Queue de salida**: `apigateway_legal-responsibleProfiles`
+
+#### Formato de entrada:
+```json
+{
+    "request": "getAllLegalResponsibles"
+}
+```
+
+#### Formato de salida:
+```json
+[
+    {
+        "id": 1,
+        "firstNames": "María Elena",
+        "paternalSurname": "González",
+        "maternalSurname": "López",
+        "identityDocumentNumber": "87654321",
+        "documentType": "DNI",
+        "phone": "912345678",
+        "email": "maria.gonzalez@email.com",
+        "relationship": "Madre"
+    },
+    {
+        "id": 2,
+        "firstNames": "Roberto Miguel",
+        "paternalSurname": "Torres",
+        "maternalSurname": "Ramírez",
+        "identityDocumentNumber": "11445566",
+        "documentType": "DNI",
+        "phone": "987123456",
+        "email": "roberto.torres@email.com",
+        "relationship": "Padre"
+    }
+]
+```
+
+---
+
+### 👤 7. ServletActiveMQListener (Legacy)
 
 **Propósito**: Procesa mensajes del sistema de clientes para crear automáticamente perfiles de pacientes.
 
@@ -677,6 +767,12 @@ Los logs aparecen en la consola de WildFly con formato:
      - `apigateway_patientData` (salida)
      - `profiles_getMedicalRecord` (entrada)
      - `apigateway_filiationFiles` (salida)
+     - `profiles_getSessions` (entrada)
+     - `apigateway_getSessions` (salida)
+     - `profiles_therapistProfiles` (entrada)
+     - `apigateway_therapistProfiles` (salida)
+     - `profiles_legal-responsibleProfiles` (entrada)
+     - `apigateway_legal-responsibleProfiles` (salida)
      - `patient.processing.queue` (entrada - legacy)
 
 4. **Verificar despliegue:**
@@ -684,12 +780,15 @@ Los logs aparecen en la consola de WildFly con formato:
    - Logs: WildFly console para ver conexión de listeners JMS
    - ActiveMQ Web Console: `http://localhost:8161/admin` (admin/admin)
    - MySQL: Verificar conexión del DataSource en WildFly Admin Console: `http://localhost:9990`
-   - Verificar que los 5 listeners se conecten exitosamente:
+   - Verificar que los 7 listeners se conecten exitosamente:
      ```
      SUCCESS: ProfileRegisterActiveMQListener connected to profiles_register
      SUCCESS: ExcelDataActiveMQListener connected to profiles_getExcelData
      SUCCESS: AppointmentDataActiveMQListener connected to profiles_getAppointmentData  
      SUCCESS: MedicalRecordActiveMQListener connected to profiles_getMedicalRecord
+     SUCCESS: SessionProfileActiveMQListener connected to profile_getSessions
+     SUCCESS: TherapistProfilesActiveMQListener connected to profiles_therapistProfiles
+     SUCCESS: LegalResponsibleProfilesActiveMQListener connected to profiles_legal-responsibleProfiles
      SUCCESS: ServletActiveMQListener connected to patient.processing.queue
      ```
 
