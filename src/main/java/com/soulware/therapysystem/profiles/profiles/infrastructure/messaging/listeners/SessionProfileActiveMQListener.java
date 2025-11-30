@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.Optional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.soulware.therapysystem.profiles.profiles.domain.services.PatientProfileQueryService;
 import com.soulware.therapysystem.profiles.profiles.domain.services.TherapistProfileQueryService;
 import com.soulware.therapysystem.profiles.profiles.domain.services.LegalResponsibleProfileQueryService;
@@ -88,34 +91,51 @@ public class SessionProfileActiveMQListener implements ServletContextListener, M
             if (messageText == null) return;
 
             Jsonb jsonb = JsonbBuilder.create();
-            SessionRequest request = jsonb.fromJson(messageText, SessionRequest.class);
+            SessionData sessionData = jsonb.fromJson(messageText, SessionData.class);
             
-            if (request == null || request.id == null) {
-                logger.warning("Invalid session request: " + messageText);
+            if (sessionData == null || sessionData.items == null) {
+                logger.warning("Invalid session data: " + messageText);
                 return;
             }
 
-            // Get profile names by IDs
-            String therapistName = getTherapistName(request.therapist_id);
-            String patientName = getPatientName(request.patient_id);
-            String legalResponsibleName = getLegalResponsibleName(request.legal_responsible_id);
+            // Process each session item and get profile names
+            List<SessionResponse> responses = new ArrayList<>();
+            for (SessionItem item : sessionData.items) {
+                if (item.id == null) {
+                    logger.warning("Session item missing ID, skipping: " + item);
+                    continue;
+                }
 
-            // Create response with names
-            SessionResponse response = new SessionResponse(
-                request.id,
-                therapistName,
-                patientName,
-                legalResponsibleName,
-                request.start_at,
-                request.ends_at,
-                request.status
+                String therapistName = getTherapistName(item.therapistId);
+                String patientName = getPatientName(item.patientId);
+                String legalResponsibleName = getLegalResponsibleName(item.legalResponsibleId);
+
+                SessionResponse response = new SessionResponse(
+                    item.id,
+                    therapistName,
+                    patientName,
+                    legalResponsibleName,
+                    item.startAt,
+                    item.endsAt,
+                    item.status
+                );
+                responses.add(response);
+            }
+
+            // Create response data
+            SessionResponseData responseData = new SessionResponseData(
+                responses,
+                sessionData.page,
+                sessionData.size,
+                sessionData.totalItems,
+                sessionData.totalPages
             );
 
             // Send response
-            String responseJson = jsonb.toJson(response);
+            String responseJson = jsonb.toJson(responseData);
             TextMessage responseMessage = session.createTextMessage(responseJson);
             producer.send(responseMessage);
-            logger.info("Sent session profile data to apigateway_getSessions for session ID: " + request.id);
+            logger.info("Sent session profile data to apigateway_getSessions for " + responses.size() + " sessions");
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error processing session profile message: " + e.getMessage(), e);
@@ -242,18 +262,43 @@ public class SessionProfileActiveMQListener implements ServletContextListener, M
         return fullName.toString();
     }
 
-    // DTO for incoming session request
-    public static class SessionRequest {
+    // DTO for incoming session data (direct format)
+    public static class SessionData {
+        public List<SessionItem> items;
+        public Integer page;
+        public Integer size;
+        public Integer totalItems;
+        public Integer totalPages;
+    }
+
+    public static class SessionItem {
         public Integer id;
-        public Integer therapist_id;
-        public Integer patient_id;
-        public Integer legal_responsible_id;
-        public String start_at;
-        public String ends_at;
+        public Integer therapistId;
+        public Integer patientId;
+        public Integer legalResponsibleId;
+        public String startAt;
+        public String endsAt;
         public String status;
     }
 
-    // DTO for outgoing session response with names
+    // DTO for outgoing session response data
+    public static class SessionResponseData {
+        public List<SessionResponse> items;
+        public Integer page;
+        public Integer size;
+        public Integer totalItems;
+        public Integer totalPages;
+
+        public SessionResponseData(List<SessionResponse> items, Integer page, Integer size, Integer totalItems, Integer totalPages) {
+            this.items = items;
+            this.page = page;
+            this.size = size;
+            this.totalItems = totalItems;
+            this.totalPages = totalPages;
+        }
+    }
+
+    // DTO for individual session response with names
     public static class SessionResponse {
         public Integer id;
         public String therapist_name;
