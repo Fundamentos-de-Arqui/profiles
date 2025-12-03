@@ -14,7 +14,7 @@ import org.eclipse.microprofile.health.Liveness;
 @Liveness
 @ApplicationScoped
 public class LivenessCheck implements HealthCheck {
-    @Resource(lookup = "java:jboss/datasources/{datasource del wildfly perteneciente a este}")
+    @Resource(lookup = "java:/MySqlDS")
             DataSource dataSource;
 
     @Override
